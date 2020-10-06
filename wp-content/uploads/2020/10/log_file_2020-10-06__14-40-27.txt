@@ -1,0 +1,89 @@
+
+---Downloaded files---
+The import files for: Default Demo were successfully downloaded!
+Initial max execution time = 300
+Files info:
+Site URL = http://localhost/OneCarbonDesign
+Data file = D:\wamp64\www\OneCarbonDesign/wp-content/themes/sheon_skateboard/demo-content/demo3/sheon_skateboard.wordpress.xml
+Widget file = D:\wamp64\www\OneCarbonDesign/wp-content/themes/sheon_skateboard/demo-content/demo3/sheon_skateboard_widgets_settings.wie
+Customizer file = D:\wamp64\www\OneCarbonDesign/wp-content/themes/sheon_skateboard/demo-content/demo3/sheon_skateboard_customizer_export.dat
+Redux files:
+not defined!
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+---Importing widgets---
+shop-sidebar : Sidebar does not exist in theme (moving widget to Inactive)
+
+Categorías de producto - Shop by category - Imported to Inactive
+Filtrar productos por precio - Filter by price - Imported to Inactive
+Productos por puntuación - Top rated products - Imported to Inactive
+Productos por puntuación - Top rated products - Imported to Inactive
+Left Banner - No Title - Imported to Inactive
+
+Main Sidebar : 
+
+Buscar - No Title - Widget already exists
+Entradas recientes - No Title - Widget already exists
+Archivos - No Title - Widget already exists
+Categorías - No Title - Widget already exists
+Meta - No Title - Widget already exists
+
+Header Shopping Cart Widget Area : 
+
+Carrito - Cart - Imported
+
+Header Search Widget Area : 
+
+Búsqueda de productos - No Title - Imported
+
+First Footer Widget Area : 
+
+Footer Contact Us - Contact Us - Imported
+Follow Us - Follow Us - Imported
+
+Second Footer Widget Area : 
+
+Static Links - Categories - Imported
+
+Third Footer Widget Area : 
+
+Static Links - Information - Imported
+
+Forth Footer Widget Area : 
+
+Static Links - Quick Links - Imported
+
+Fifth Footer Widget Area : 
+
+Editor visual - Newsletter - Imported
+
+Woocommerce Accepted Payment Widget Area : 
+
+WooCommerce Accepted Payment Methods - No Title - Imported
+
+
+
+---Importing customizer settings---
+Customizer settings import finished!
+
+---pt-ocdi/after_import---
+Slider processed
