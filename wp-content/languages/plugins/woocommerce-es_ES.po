@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - WooCommerce - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-01 08:49:23+0000\n"
+"PO-Revision-Date: 2020-10-14 06:27:34+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -27536,7 +27536,7 @@ msgstr "Pedido actualizado."
 #. translators: %s: product url
 #: includes/admin/class-wc-admin-post-types.php:144
 msgid "Product draft updated. <a target=\"_blank\" href=\"%s\">Preview product</a>"
-msgstr "Borrador del producto actualizado. <a target=\"_blank\" href=\"%s\">Previsualizar Producto</a>"
+msgstr "Borrador del producto actualizado. <a target=\"_blank\" href=\"%s\">Previsualizar el producto</a>"
 
 #: includes/admin/settings/views/html-webhooks-edit.php:168
 #: includes/admin/settings/views/html-webhooks-edit.php:177
