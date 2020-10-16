@@ -4,7 +4,7 @@
   Plugin Name: Newsletter
   Plugin URI: https://www.thenewsletterplugin.com/plugins/newsletter
   Description: Newsletter is a cool plugin to create your own subscriber list, to send newsletters, to build your business. <strong>Before update give a look to <a href="https://www.thenewsletterplugin.com/category/release">this page</a> to know what's changed.</strong>
-  Version: 6.8.8
+  Version: 6.9.1
   Author: Stefano Lissa & The Newsletter Team
   Author URI: https://www.thenewsletterplugin.com
   Disclaimer: Use at your own risk. No warranty expressed or implied is provided.
@@ -35,7 +35,7 @@ if (version_compare(phpversion(), '5.6', '<')) {
     return;
 }
 
-define('NEWSLETTER_VERSION', '6.8.7');
+define('NEWSLETTER_VERSION', '6.9.1');
 
 global $newsletter, $wpdb;
 
@@ -518,11 +518,11 @@ class Newsletter extends NewsletterModule {
         wp_enqueue_media();
 
         wp_enqueue_style('tnp-admin-font', 'https://use.typekit.net/jlj2wjy.css');
-        wp_enqueue_style('tnp-admin-fontawesome', $newsletter_url . '/vendor/fa/css/all.min.css', [], '6.6.0');
-        wp_enqueue_style('tnp-admin-jquery-ui', $newsletter_url . '/vendor/jquery-ui/jquery-ui.min.css', [], '6.6.0');
-        wp_enqueue_style('tnp-admin-dropdown', $newsletter_url . '/css/dropdown.css', [], '6.6.0');
-        wp_enqueue_style('tnp-admin-fields', $newsletter_url . '/css/fields.css', [], '6.6.0');
-        wp_enqueue_style('tnp-admin-widgets', $newsletter_url . '/css/widgets.css', [], '6.6.0');
+        wp_enqueue_style('tnp-admin-fontawesome', $newsletter_url . '/vendor/fa/css/all.min.css', [], NEWSLETTER_VERSION);
+        wp_enqueue_style('tnp-admin-jquery-ui', $newsletter_url . '/vendor/jquery-ui/jquery-ui.min.css', [], NEWSLETTER_VERSION);
+        wp_enqueue_style('tnp-admin-dropdown', $newsletter_url . '/css/dropdown.css', [], NEWSLETTER_VERSION);
+        wp_enqueue_style('tnp-admin-fields', $newsletter_url . '/css/fields.css', [], NEWSLETTER_VERSION);
+        wp_enqueue_style('tnp-admin-widgets', $newsletter_url . '/css/widgets.css', [], NEWSLETTER_VERSION);
         wp_enqueue_style('tnp-admin', $newsletter_url . '/admin.css',
                 array(
                     'tnp-admin-font',
@@ -531,9 +531,9 @@ class Newsletter extends NewsletterModule {
                     'tnp-admin-dropdown',
                     'tnp-admin-fields',
                     'tnp-admin-widgets'
-                ), filemtime(NEWSLETTER_DIR . '/admin.css'));
+                ), NEWSLETTER_VERSION);
 
-        wp_enqueue_script('tnp-admin', $newsletter_url . '/admin.js', array('jquery'), time());
+        wp_enqueue_script('tnp-admin', $newsletter_url . '/admin.js', ['jquery'], NEWSLETTER_VERSION);
 
         $translations_array = array(
             'save_to_update_counter' => __('Save the newsletter to update the counter!', 'newsletter')
@@ -574,12 +574,6 @@ class Newsletter extends NewsletterModule {
             delete_option('newsletter_show_welcome');
             wp_redirect(admin_url('admin.php?page=newsletter_main_welcome'));
         }
-
-        // https://developer.wordpress.org/plugins/privacy/suggesting-text-for-the-site-privacy-policy/
-        // https://make.wordpress.org/core/2018/05/17/4-9-6-update-guide/
-        //if (function_exists('wp_add_privacy_policy_content')) {
-        //wp_add_privacy_policy_content('Newsletter', wp_kses_post( wpautop( $content, false )));
-        //}
     }
 
     function hook_admin_head() {
@@ -1022,29 +1016,6 @@ class Newsletter extends NewsletterModule {
         wp_clear_scheduled_hook('newsletter');
     }
 
-    function shortcode_newsletter_form($attrs, $content) {
-        return $this->form($attrs['form']);
-    }
-
-    function form($number = null) {
-        if ($number == null)
-            return $this->subscription_form();
-        $options = get_option('newsletter_forms');
-
-        $form = $options['form_' . $number];
-
-        if (stripos($form, '<form') !== false) {
-            $form = str_replace('{newsletter_url}', plugins_url('newsletter/do/subscribe.php'), $form);
-        } else {
-            $form = '<form method="post" action="' . plugins_url('newsletter/do/subscribe.php') . '" onsubmit="return newsletter_check(this)">' .
-                    $form . '</form>';
-        }
-
-        $form = $this->replace_lists($form);
-
-        return $form;
-    }
-
     function find_file($file1, $file2) {
         if (is_file($file1))
             return $file1;
@@ -1065,6 +1036,7 @@ class Newsletter extends NewsletterModule {
             $value->response = array();
         }
 
+        // Already computed? Use it! (this filter is called many times in a single request)
         if ($extra_response) {
             //$this->logger->debug('Already updated');
             $value->response = array_merge($value->response, $extra_response);
@@ -1073,6 +1045,7 @@ class Newsletter extends NewsletterModule {
 
         $extensions = $this->getTnpExtensions();
 
+        // Ops...
         if (!$extensions) {
             return $value;
         }
@@ -1082,6 +1055,7 @@ class Newsletter extends NewsletterModule {
             unset($value->no_update[$extension->wp_slug]);
         }
 
+        // Someone doesn't want our addons updated, let respect it (this constant should be defined in wp-config.php)
         if (!NEWSLETTER_EXTENSION_UPDATE) {
             //$this->logger->info('Updates disabled');
             return $value;
@@ -1089,6 +1063,7 @@ class Newsletter extends NewsletterModule {
 
         include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
+        // Ok, that is really bad (should we remove it? is there a minimum WP version?)
         if (!function_exists('get_plugin_data')) {
             //$this->logger->error('No get_plugin_data function available!');
             return $value;
@@ -1096,6 +1071,8 @@ class Newsletter extends NewsletterModule {
 
         $license_key = $this->get_license_key();
 
+        // Here we prepare the update information BUT do not add the link to the package which is privided
+        // by our Addons Manager (due to WP policies)
         foreach ($extensions as $extension) {
 
             // Patch for names convention
@@ -1142,6 +1119,7 @@ class Newsletter extends NewsletterModule {
                 //$this->logger->debug('There is a new version');
                 $extra_response[$extension->plugin] = $plugin;
             } else {
+                // Maybe useless...
                 //$this->logger->debug('There is NOT a new version');
                 $value->no_update[$extension->plugin] = $plugin;
             }

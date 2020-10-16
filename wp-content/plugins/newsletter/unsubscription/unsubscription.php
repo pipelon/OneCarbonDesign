@@ -120,7 +120,7 @@ class NewsletterUnsubscription extends NewsletterModule {
 
         $message = $this->generate_admin_notification_message($user);
         $email = trim(get_option('admin_email'));
-        $subject = $this->generate_admin_notification_subject('Newsletter subscription cacellation');
+        $subject = $this->generate_admin_notification_subject('New cancellation');
 
         Newsletter::instance()->mail($email, $subject, array('html' => $message));
     }

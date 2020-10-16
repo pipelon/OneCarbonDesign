@@ -21,7 +21,7 @@ The wishlist is one of the most powerful and popular tools in an ecommerce shop.
 
 This means that you’ll be able to loyalise customers, push them to buy and attract new customers any time a wishlist is shared. Not bad for one plugin only, don’t you think?
 
-Our YITH WooCommerce Wishlist has more than **700,000 active installations** and that’s why it’s **the most popular wishlist plugin ever.**
+Our YITH WooCommerce Wishlist has more than **800,000 active installations** and that’s why it’s **the most popular wishlist plugin ever.**
 
 To celebrate this record and say thanks to all the plugin users, we’ve decided to release a new 3.0 version that has improved the design tremendously  and added many new options.
 
@@ -151,13 +151,16 @@ Yes, of course you can. To avoid Wishlist page to show product prices, you can h
 
 ## Changelog
 
-### 3.0.14 - Released on 17 September 2020
+### 3.0.15 - Released on 16 October 2020
 
-* New: support for WooCommerce 4.5
+* New: support for WooCommerce 4.6
 * Update: plugin framework
-* Tweak: filter fragments to update only visible ATW when reset_data js event occurs
-* Tweak: added error message when trying to add variable products to cart
-* Fix: issue with cart redirect when using YITH WCCL
+* Tweak: return product price as float in item class
+* Fix: prevent possible fatal error when printing ATW button
+* Fix: original price being sent to database as int instead of float
+* Dev: added new filter yith_wcwl_set_session_cookie
+* Dev: added new filter yith_wcwl_privacy_value
+* Dev: added new parameter to yith_wcwl_{privacy}_wishlist_visibility filter
 
 ## Support
 

@@ -45,8 +45,7 @@ class NewsletterStatistics extends NewsletterModule {
             $url = implode(';', $parts);
 
             if (empty($user_id) || empty($url)) {
-                header("HTTP/1.0 404 Not Found");
-                die('Invalid data');
+                $this->dienow('Invalid link', 'The tracking link contains invalid data (missing subscriber or original URL)', 404);
             }
 
             $parts = parse_url($url);
@@ -54,14 +53,12 @@ class NewsletterStatistics extends NewsletterModule {
             $verified = $signature == md5($email_id . ';' . $user_id . ';' . $url . ';' . $anchor . $this->options['key']);
 
             if (!$verified) {
-                header("HTTP/1.0 404 Not Found");
-                die('Url not verified');
+                $this->dienow('Invalid link', 'The link signature (which grants a valid redirection and protects from redirect attacks) is not valid.', 404);
             }
 
             $user = Newsletter::instance()->get_user($user_id);
             if (!$user) {
-                header("HTTP/1.0 404 Not Found");
-                die('Invalid subscriber');
+                $this->dienow(__('Subscriber not found', 'newsletter'), 'This tracking link contains a reference to a subscriber no more present', 404);
             }
 
             // Test emails
@@ -72,8 +69,7 @@ class NewsletterStatistics extends NewsletterModule {
 
             $email = $this->get_email($email_id);
             if (!$email) {
-                header("HTTP/1.0 404 Not Found");
-                die('Invalid newsletter');
+                $this->dienow('Invalid newsletter', 'The link originates from a newsletter not found (it could have been deleted)', 404);
             }
 
             setcookie('newsletter', $user->id . '-' . $user->token, time() + 60 * 60 * 24 * 365, '/');

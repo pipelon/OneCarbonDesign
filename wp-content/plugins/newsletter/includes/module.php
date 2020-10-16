@@ -51,6 +51,10 @@ class TNP_List {
     var $show_on_subscription;
     var $show_on_profile;
 
+    function is_private() {
+        return $this->status == self::STATUS_PRIVATE;
+    }
+
 }
 
 /**
@@ -99,12 +103,16 @@ class TNP_Profile {
         return $this->rule == 1;
     }
 
+    function is_private() {
+        return $this->status == self::STATUS_PRIVATE;
+    }
+
 }
 
 class TNP_Profile_Service {
 
     /**
-     * 
+     *
      * @param string $language
      * @param string $type
      * @return TNP_Profile[]
@@ -139,7 +147,8 @@ class TNP_Profile_Service {
     static function get_profile_by_id($id, $language = '') {
 
         $profiles = self::get_profiles($language);
-        if (isset($profiles[$id])) return $profiles[$id];
+        if (isset($profiles[$id]))
+            return $profiles[$id];
         return null;
     }
 
@@ -172,6 +181,110 @@ class TNP_Profile_Service {
 }
 
 /**
+ * Represents the set of data collected by a subscription interface (form, API, ...). Only a valid
+ * email is mandatory.
+ */
+class TNP_Subscription_Data {
+
+    var $email = null;
+    var $name = null;
+    var $surname = null;
+    var $sex = null;
+    var $language = null;
+    var $referrer = null;
+    var $http_referrer = null;
+    var $ip = null;
+    var $country = null;
+    var $region = null;
+    var $city = null;
+
+    /**
+     * Associative array id=>value of lists chosen by the subscriber. A list can be set to
+     * 0 meaning the subscriber does not want to be in that list.
+     * The lists must be public: non public lists are filtered.
+     * @var array
+     */
+    var $lists = [];
+    var $profiles = [];
+
+    function merge_in($subscriber) {
+        if (!$subscriber)
+            $subscriber = new TNP_User();
+        if (!empty($this->email))
+            $subscriber->email = $this->email;
+        if (!empty($this->name))
+            $subscriber->name = $this->name;
+        if (!empty($this->surname))
+            $subscriber->surname = $this->surname;
+        if (!empty($this->sex))
+            $subscriber->sex = $this->sex;
+        if (!empty($this->language))
+            $subscriber->language = $this->language;
+        if (!empty($this->ip))
+            $subscriber->ip = $this->ip;
+        if (!empty($this->referrer))
+            $subscriber->referrer = $this->referrer;
+        if (!empty($this->http_referrer))
+            $subscriber->http_referrer = $this->http_referrer;
+	    if (!empty($this->country))
+		    $subscriber->country = $this->country;
+	    if (!empty($this->region))
+		    $subscriber->region = $this->region;
+	    if (!empty($this->city))
+		    $subscriber->city = $this->city;
+
+
+        foreach ($this->lists as $id => $value) {
+            $key = 'list_' . $id;
+            $subscriber->$key = $value;
+        }
+
+        // Profile
+        foreach ($this->profiles as $id => $value) {
+            $key = 'profile_' . $id;
+            $subscriber->$key = $value;
+        }
+    }
+
+}
+
+/**
+ * Represents a subscription request with the subscriber data and actions to be taken by
+ * the subscription engine (spam check, notifications, ...).
+ */
+class TNP_Subscription {
+
+    const EXISTING_ERROR = 1;
+    const EXISTING_MERGE = 0;
+
+    /**
+     * Subscriber data following the syntax of the TNP_User
+     * @var TNP_Subscription_Data
+     */
+    var $data;
+    var $spamcheck = true;
+
+
+    // The optin to use, empty for the plugin default. It's a string to facilitate the use by addons (which have a selector for the desired
+    // optin as empty (for default), 'single' or 'double'.
+    var $optin = null;
+    // What to do with an existing subscriber???
+    var $if_exists = self::EXISTING_MERGE;
+
+    /**
+     * Determines if the welcome or activation email should be sent. Note: sometime an activation email is sent disregarding
+     * this setting.
+     * @var boolean
+     */
+    var $send_emails = true;
+
+    public function __construct() {
+        $this->data = new TNP_Subscription_Data();
+    }
+
+}
+
+/**
  * @property int $id The subscriber unique identifier
  * @property string $email The subscriber email
  * @property string $name The subscriber name or first name
@@ -180,7 +293,7 @@ class TNP_Profile_Service {
  * @property string $language The subscriber language code 2 chars lowercase
  * @property string $token The subscriber secret token
  */
-abstract class TNP_User {
+class TNP_User {
 
     const STATUS_CONFIRMED = 'C';
     const STATUS_NOT_CONFIRMED = 'S';
@@ -737,7 +850,7 @@ class NewsletterModule {
     }
 
     function admin_menu() {
-        
+
     }
 
     function add_menu_page($page, $title, $capability = '') {
@@ -1100,6 +1213,24 @@ class NewsletterModule {
     }
 
     /**
+     *
+     * @global wpdb $wpdb
+     * @param string $email
+     * @return TNP_User
+     */
+    function get_user_by_email($email) {
+        global $wpdb;
+
+        $r = $wpdb->get_row($wpdb->prepare("select * from " . NEWSLETTER_USERS_TABLE . " where email=%s limit 1", $email));
+
+        if ($wpdb->last_error) {
+            $this->logger->error($wpdb->last_error);
+            return null;
+        }
+        return $r;
+    }
+
+    /**
      * Accepts a user ID or a TNP_User object. Does not check if the user really exists.
      *
      * @param type $user
@@ -1219,33 +1350,42 @@ class NewsletterModule {
             if (empty($data['list_' . $i])) {
                 continue;
             }
-            $list = new TNP_List();
-            $list->name = $data['list_' . $i];
-            $list->id = $i;
+            $list = $this->create_tnp_list_from_db_lists_array($data, $i);
 
-            // New format
-            if (isset($data['list_' . $i . '_subscription'])) {
-                $list->forced = !empty($data['list_' . $i . '_forced']);
-                $list->status = empty($data['list_' . $i . '_status']) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
-                $list->checked = $data['list_' . $i . '_subscription'] == 2;
-                $list->show_on_subscription = $list->status != TNP_List::STATUS_PRIVATE && !empty($data['list_' . $i . '_subscription']) && !$list->forced;
-                $list->show_on_profile = $list->status != TNP_List::STATUS_PRIVATE && !empty($data['list_' . $i . '_profile']);
-            } else {
-                $list->forced = !empty($data['list_' . $i . '_forced']);
-                $list->status = empty($data['list_' . $i . '_status']) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
-                $list->checked = !empty($data['list_' . $i . '_checked']);
-                $list->show_on_subscription = $data['list_' . $i . '_status'] == 2 && !$list->forced;
-                $list->show_on_profile = $data['list_' . $i . '_status'] == 1 || $data['list_' . $i . '_status'] == 2;
-            }
-            if (empty($data['list_' . $i . '_languages'])) {
-                $list->languages = array();
-            } else {
-                $list->languages = $data['list_' . $i . '_languages'];
-            }
             $lists[$language]['' . $list->id] = $list;
         }
         return $lists[$language];
     }
+
+	public function create_tnp_list_from_db_lists_array( $db_lists_array, $list_id ) {
+
+		$list       = new TNP_List();
+		$list->name = $db_lists_array[ 'list_' . $list_id ];
+		$list->id   = $list_id;
+
+		// New format
+		if ( isset( $db_lists_array[ 'list_' . $list_id . '_subscription' ] ) ) {
+			$list->forced               = ! empty( $db_lists_array[ 'list_' . $list_id . '_forced' ] );
+			$list->status               = empty( $db_lists_array[ 'list_' . $list_id . '_status' ] ) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
+			$list->checked              = $db_lists_array[ 'list_' . $list_id . '_subscription' ] == 2;
+			$list->show_on_subscription = $list->status != TNP_List::STATUS_PRIVATE && ! empty( $db_lists_array[ 'list_' . $list_id . '_subscription' ] ) && ! $list->forced;
+			$list->show_on_profile      = $list->status != TNP_List::STATUS_PRIVATE && ! empty( $db_lists_array[ 'list_' . $list_id . '_profile' ] );
+		} else {
+			$list->forced               = ! empty( $db_lists_array[ 'list_' . $list_id . '_forced' ] );
+			$list->status               = empty( $db_lists_array[ 'list_' . $list_id . '_status' ] ) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
+			$list->checked              = ! empty( $db_lists_array[ 'list_' . $list_id . '_checked' ] );
+			$list->show_on_subscription = $db_lists_array[ 'list_' . $list_id . '_status' ] == 2 && ! $list->forced;
+			$list->show_on_profile      = $db_lists_array[ 'list_' . $list_id . '_status' ] == 1 || $db_lists_array[ 'list_' . $list_id . '_status' ] == 2;
+		}
+		if ( empty( $db_lists_array[ 'list_' . $list_id . '_languages' ] ) ) {
+			$list->languages = array();
+		} else {
+			$list->languages = $db_lists_array[ 'list_' . $list_id . '_languages' ];
+		}
+
+		return $list;
+
+	}
 
     /**
      * Returns an array of TNP_List objects of lists that are public.
@@ -1777,7 +1917,7 @@ class NewsletterModule {
             $text = str_replace('{key}', $nk, $text);
             $text = str_replace('%7Bkey%7D', $nk, $text);
 
-            for ($i = 1; $i < NEWSLETTER_PROFILE_MAX; $i++) {
+            for ($i = 1; $i <= NEWSLETTER_PROFILE_MAX; $i++) {
                 $p = 'profile_' . $i;
                 $text = str_replace('{profile_' . $i . '}', $user->$p, $text);
             }
@@ -2204,7 +2344,7 @@ class NewsletterModule {
 
     function dienow($message, $admin_message = null, $http_code = 200) {
         if ($admin_message && current_user_can('administrator')) {
-            $message .= '<br><br><strong>Text below only visibile to administrarors</strong><br>';
+            $message .= '<br><br><strong>Text below only visibile to administrators</strong><br>';
             $message .= $admin_message;
         }
         wp_die($message, $http_code);

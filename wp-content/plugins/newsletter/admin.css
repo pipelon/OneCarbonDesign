@@ -2456,3 +2456,7 @@ span.tnp-email-status-sent {
 .text-left {
     text-align: left;
 }
+
+.tab-min-height {
+    min-height: 500px;
+}

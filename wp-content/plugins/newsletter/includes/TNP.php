@@ -231,6 +231,18 @@ class TNP {
             $user['sex'] = $newsletter->normalize_sex($params['gender']);
         }
 
+	    if (!empty($params['country'])) {
+		    $user['country'] = sanitize_text_field($params['country']);
+	    }
+
+	    if (!empty($params['region'])) {
+		    $user['region'] = sanitize_text_field($params['region']);
+	    }
+
+	    if (!empty($params['city'])) {
+		    $user['city'] = sanitize_text_field($params['city']);
+	    }
+
         for ($i = 1; $i <= NEWSLETTER_PROFILE_MAX; $i ++) {
             if (isset($params['profile_' . $i])) {
                 $user['profile_' . $i] = trim(stripslashes($params['profile_' . $i]));
