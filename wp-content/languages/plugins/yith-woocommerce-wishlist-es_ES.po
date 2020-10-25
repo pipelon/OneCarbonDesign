@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - YITH WooCommerce Wishlist - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-08-14 11:01:29+0000\n"
+"PO-Revision-Date: 2020-10-17 06:32:39+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -11,15 +11,21 @@ msgstr ""
 "Language: es\n"
 "Project-Id-Version: Plugins - YITH WooCommerce Wishlist - Stable (latest release)\n"
 
-#: plugin-fw/templates/sysinfo/system-information-panel.php:167
+#: plugin-fw/templates/sysinfo/system-information-panel.php:128
+msgid "External object cache"
+msgstr "Caché de objeto externo"
+
+#: plugin-fw/templates/sysinfo/system-information-panel.php:175
 msgid "Show log files"
 msgstr "Mostrar los archivos de registro"
 
 #: plugin-fw/templates/sysinfo/system-information-panel.php:123
+#: plugin-fw/templates/sysinfo/system-information-panel.php:131
 msgid "No"
 msgstr "No"
 
 #: plugin-fw/templates/sysinfo/system-information-panel.php:123
+#: plugin-fw/templates/sysinfo/system-information-panel.php:131
 msgid "Yes"
 msgstr "Sí"
 
@@ -78,7 +84,7 @@ msgstr "Vaciar"
 msgid "another"
 msgstr "otro"
 
-#: plugin-fw/templates/fields/dimensions.php:117
+#: plugin-fw/templates/fields/dimensions.php:99
 msgctxt "Tooltip in the \"Dimensions\" field"
 msgid "Link values together"
 msgstr "Enlazar los valores juntos"
@@ -231,19 +237,19 @@ msgctxt "YES/NO button: use MAX 3 characters!"
 msgid "NO"
 msgstr "NO"
 
-#: plugin-fw/lib/yit-plugin-panel.php:1285
+#: plugin-fw/lib/yit-plugin-panel.php:1318
 msgid ":) Thanks!"
 msgstr ":) ¡Gracias!"
 
-#: plugin-fw/lib/yit-plugin-panel.php:1284
+#: plugin-fw/lib/yit-plugin-panel.php:1317
 msgid "help us by leaving a five-star rating"
 msgstr "ayúdanos dejando una valoración de cinco estrellas"
 
-#: plugin-fw/lib/yit-plugin-panel.php:1282
+#: plugin-fw/lib/yit-plugin-panel.php:1315
 msgid "to keep updating and improving the plugin. Please,"
 msgstr "para seguir actualizando y manteniendo el plugin. Por favor,"
 
-#: plugin-fw/lib/yit-plugin-panel.php:1281
+#: plugin-fw/lib/yit-plugin-panel.php:1314
 msgid "We need your support"
 msgstr "Necesitamos tu apoyo"
 
@@ -1145,7 +1151,7 @@ msgstr "Volver arriba"
 msgid "Back to System panel"
 msgstr "Volver al panel del sistema"
 
-#: plugin-fw/templates/sysinfo/system-information-panel.php:159
+#: plugin-fw/templates/sysinfo/system-information-panel.php:167
 msgid "Show full PHPInfo"
 msgstr "Mostrar PHPInfo completo"
 
@@ -1485,8 +1491,8 @@ msgstr "Buscar producto"
 msgid "Search Posts"
 msgstr "Buscar publicaciones"
 
-#: plugin-fw/lib/yit-plugin-panel.php:454
-#: plugin-fw/lib/yit-plugin-panel.php:457
+#: plugin-fw/lib/yit-plugin-panel.php:465
+#: plugin-fw/lib/yit-plugin-panel.php:468
 msgid "How to install premium version"
 msgstr "Cómo instalar la versión premium"
 
@@ -1765,66 +1771,66 @@ msgstr ""
 msgid "Plugins Activated"
 msgstr "Plugins activados"
 
-#: plugin-fw/lib/yit-plugin-panel.php:833
+#: plugin-fw/lib/yit-plugin-panel.php:851
 msgid "Sorting successful."
 msgstr "Ordenado cono éxito."
 
-#: plugin-fw/lib/yit-plugin-panel.php:832
+#: plugin-fw/lib/yit-plugin-panel.php:850
 msgid "Sorry, import is disabled."
 msgstr "Lo siento, la importación está desactivada."
 
-#: plugin-fw/lib/yit-plugin-panel.php:831
+#: plugin-fw/lib/yit-plugin-panel.php:849
 msgid "The added file is not valid."
 msgstr "El archivo añadido no es válido."
 
-#: plugin-fw/lib/yit-plugin-panel.php:830
+#: plugin-fw/lib/yit-plugin-panel.php:848
 msgid "An error has occurred during import. Please try again."
 msgstr "Ocurrió un error durante la importación. Por favor, inténtalo de nuevo."
 
-#: plugin-fw/lib/yit-plugin-panel.php:829
+#: plugin-fw/lib/yit-plugin-panel.php:847
 msgid "Database imported correctly."
 msgstr "Base de datos importada correctamente."
 
-#: plugin-fw/lib/yit-plugin-panel.php:827
-#: plugin-fw/lib/yit-plugin-panel.php:828
+#: plugin-fw/lib/yit-plugin-panel.php:845
+#: plugin-fw/lib/yit-plugin-panel.php:846
 msgid "Element updated correctly."
 msgstr "Elemento actualizado correctamente."
 
-#: plugin-fw/lib/yit-plugin-panel.php:826
+#: plugin-fw/lib/yit-plugin-panel.php:844
 msgid "Element deleted correctly."
 msgstr "Elemento borrado correctamente."
 
-#: plugin-fw/lib/yit-plugin-panel.php:825
+#: plugin-fw/lib/yit-plugin-panel.php:843
 msgid "Settings reset"
 msgstr "Restablecer ajustes"
 
-#: plugin-fw/lib/yit-plugin-panel.php:824
+#: plugin-fw/lib/yit-plugin-panel.php:842
 msgid "Settings saved"
 msgstr "Ajustes guardados"
 
-#: plugin-fw/lib/yit-plugin-panel.php:823
+#: plugin-fw/lib/yit-plugin-panel.php:841
 msgid "The element you have entered already exists. Please, enter another name."
 msgstr "El elemento que has introducido ya existe. Por favor, introduce otro nombre."
 
 #: plugin-fw/templates/panel/woocommerce/woocommerce-form.php:23
-#: plugin-fw/lib/yit-plugin-panel.php:625
+#: plugin-fw/lib/yit-plugin-panel.php:640
 #: plugin-fw/lib/yit-plugin-subpanel.php:157
 msgid "Are you sure?"
 msgstr "¿Estás seguro?"
 
-#: plugin-fw/lib/yit-plugin-panel.php:624
+#: plugin-fw/lib/yit-plugin-panel.php:639
 #: plugin-fw/lib/yit-plugin-subpanel.php:156
 msgid "Reset to default"
 msgstr "Restablecer valores por defecto"
 
 #: plugin-fw/templates/panel/woocommerce/woocommerce-form.php:19
-#: plugin-fw/lib/yit-plugin-panel.php:621
+#: plugin-fw/lib/yit-plugin-panel.php:636
 #: plugin-fw/lib/yit-plugin-subpanel.php:154
 msgid "If you continue with this action, you will reset all options in this page."
 msgstr "Si sigues con esta acción restablecerás todos los ajustes de esta página."
 
 #: plugin-fw/templates/panel/woocommerce/woocommerce-form.php:15
-#: plugin-fw/lib/yit-plugin-panel.php:617
+#: plugin-fw/lib/yit-plugin-panel.php:632
 #: plugin-fw/lib/yit-plugin-subpanel.php:151
 msgid "Save Changes"
 msgstr "Guardar cambios"
@@ -1833,7 +1839,7 @@ msgstr "Guardar cambios"
 msgid "YITH Plugins"
 msgstr "YITH Plugins"
 
-#: plugin-fw/lib/yit-plugin-panel.php:79
+#: plugin-fw/lib/yit-plugin-panel.php:80
 msgid "Plugin Settings"
 msgstr "Ajustes del plugin"
 
@@ -2265,7 +2271,7 @@ msgstr "Página de Lista de deseos"
 msgid "Premium Version"
 msgstr "Versión premium"
 
-#: plugin-fw/lib/yit-plugin-panel.php:80
+#: plugin-fw/lib/yit-plugin-panel.php:81
 #: plugin-fw/lib/yit-cpt-unlimited.php:1050
 #: plugin-fw/lib/yit-cpt-unlimited.php:1198
 #: plugin-fw/lib/yit-cpt-unlimited.php:1204

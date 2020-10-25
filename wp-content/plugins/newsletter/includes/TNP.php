@@ -139,7 +139,7 @@ class TNP {
 
         $ip = $newsletter->get_remote_ip();
 
-        NewsletterSubscription::instance()->valid_subscription_or_die($email, $full_name, $ip);
+        //NewsletterSubscription::instance()->valid_subscription_or_die($email, $full_name, $ip);
 
         $user = TNP::add_subscriber($params);
 

@@ -1,0 +1,4 @@
+24-10-2020 20:27:21 - ERROR - v: 6.9.1 - m: 21,5 MB, u: 0 - cURL error 6: Could not resolve host: www.thenewsletterplugin.com (http_request_failed) - 
+24-10-2020 20:27:28 - ERROR - v: 6.9.1 - m: 29,0 MB, u: 0 - cURL error 6: Could not resolve host: www.thenewsletterplugin.com (http_request_failed) - 
+24-10-2020 20:27:28 - ERROR - v: 6.9.1 - m: 25,8 MB, u: 0 - cURL error 6: Could not resolve host: www.thenewsletterplugin.com (http_request_failed) - 
+24-10-2020 20:30:40 - ERROR - v: 6.9.1 - m: 22,9 MB, u: 0 - cURL error 6: Could not resolve host: www.thenewsletterplugin.com (http_request_failed) - 

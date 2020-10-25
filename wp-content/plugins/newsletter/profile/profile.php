@@ -393,15 +393,15 @@ class NewsletterProfile extends NewsletterModule {
         $data['email'] = $email;
         if (isset($_REQUEST['nn'])) {
             $data['name'] = $this->normalize_name(stripslashes($_REQUEST['nn']));
-            if ($subscription_module->is_spam_text($data['name'])) {
-                die();
-            }
+            //if ($subscription_module->is_spam_text($data['name'])) {
+            //    die();
+            //}
         }
         if (isset($_REQUEST['ns'])) {
             $data['surname'] = $this->normalize_name(stripslashes($_REQUEST['ns']));
-            if ($subscription_module->is_spam_text($data['surname'])) {
-                die();
-            }
+            //if ($subscription_module->is_spam_text($data['surname'])) {
+            //    die();
+            //}
         }
         if ($options_profile['sex_status'] >= 1) {
             $data['sex'] = $_REQUEST['nx'][0];
