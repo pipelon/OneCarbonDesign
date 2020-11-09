@@ -30,7 +30,7 @@ class NewsletterUnsubscription extends NewsletterModule {
 
         if (in_array($action, ['u', 'uc', 'lu', 'reactivate'])) {
             if (!$user) {
-                $this->dienow('The subscriber was not found.', '', 404);
+                $this->dienow(__('Subscriber not found', 'newsletter'), 'Already deleted or using the wrong subscriber key in the URL', 404);
             }
         }
 
@@ -86,8 +86,6 @@ class NewsletterUnsubscription extends NewsletterModule {
         $this->add_user_log($user, 'unsubscribe');
 
         do_action('newsletter_user_unsubscribed', $user);
-
-
 
         if ($email) {
             $wpdb->update(NEWSLETTER_USERS_TABLE, array('unsub_email_id' => (int) $email->id, 'unsub_time' => time()), array('id' => $user->id));
@@ -180,10 +178,6 @@ class NewsletterUnsubscription extends NewsletterModule {
             return $options['error_text'];
         }
         return $text;
-    }
-
-    function upgrade() {
-        parent::upgrade();
     }
 
     function admin_menu() {

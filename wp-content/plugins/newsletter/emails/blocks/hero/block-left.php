@@ -38,7 +38,9 @@
     <tr>
         <td align="center" valign="top">
             <a href="<?php echo $url ?>" target="_blank" rel="noopener nofollow" inline-class="image-a">
+                <?php if ($media) { ?>
                 <img src="<?php echo $media->url ?>" border="0" alt="<?php echo esc_attr($media->alt) ?>" width="<?php echo $media->width ?>" height="<?php echo $media->height ?>" inline-class="image">                
+                <?php } ?>
             </a>
         </td>
     </tr>

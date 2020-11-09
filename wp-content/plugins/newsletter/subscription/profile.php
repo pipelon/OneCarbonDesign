@@ -82,7 +82,6 @@ $extra_type = array('text' => __('Text', 'newsletter'), 'select' => __('List', '
                                     <tr><th>When to show</th><td><?php $controls->select('name_status', $status); ?></td></tr>
                                     <tr><th>Rules</th><td><?php $controls->select('name_rules', $rules); ?></td></tr>
                                     <?php } ?>
-                                    <tr><th>Error message</th><td><?php $controls->text('name_error', 50); ?></td></tr>
                                 </table>
                                 <p class="description">
                                     If you want to collect only a generic "name", use only this field and not the
@@ -99,7 +98,6 @@ $extra_type = array('text' => __('Text', 'newsletter'), 'select' => __('List', '
                                     <tr><th>When to show</th><td><?php $controls->select('surname_status', $status); ?></td></tr>
                                     <tr><th>Rules</th><td><?php $controls->select('surname_rules', $rules); ?></td></tr>
                                     <?php } ?>
-                                    <tr><th>Error message</th><td><?php $controls->text('surname_error', 50); ?></td></tr>
                                 </table>
                             </td>
                         </tr>
@@ -112,19 +110,25 @@ $extra_type = array('text' => __('Text', 'newsletter'), 'select' => __('List', '
                                     <tr><th>When to show</th><td><?php $controls->select('sex_status', $status); ?></td></tr>
                                     <tr><th>Rules</th><td><?php $controls->select('sex_rules', $rules); ?></td></tr>
                                     <?php } ?>
-                                    <tr><th>Value labels</th><td>
+                                    <tr>
+                                        <th>Value labels</th>
+                                        <td>
                                             female: <?php $controls->text('sex_female'); ?>
                                             male: <?php $controls->text('sex_male'); ?>
                                             not specified: <?php $controls->text('sex_none'); ?>
-                                        </td></tr>
+                                        </td>
+                                    </tr>
 
 
-                                    <tr><th>Salutation titles</th><td>
+                                    <tr>
+                                        <th>Salutation titles</th>
+                                        <td>
 
                                             for males: <?php $controls->text('title_male'); ?> (ex. "Mr")<br>
                                             for females: <?php $controls->text('title_female'); ?> (ex. "Mrs")<br>
                                             for others: <?php $controls->text('title_none'); ?>
-                                        </td></tr>
+                                        </td>
+                                    </tr>
                                 </table>
                                 <p class="description">
                                     Salutation titles are inserted in emails message when the tag {title} is used. For example
@@ -172,9 +176,6 @@ $extra_type = array('text' => __('Text', 'newsletter'), 'select' => __('List', '
                                             <?php } ?>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>Error message</th>
-                                        <td><?php $controls->text('privacy_error', 50); ?></td></tr>
                                 </table>
                                 <p class="description">
                                     The privacy acceptance checkbox (required in many Europen countries) forces the subscriber to
@@ -196,15 +197,6 @@ $extra_type = array('text' => __('Text', 'newsletter'), 'select' => __('List', '
                     <p>
                         The placeholder works only on HTML 5 compliant browsers.
                     </p>
-
-                    <table class="form-table">
-                        <tr>
-                            <th>Error message</th>
-                            <td>
-                                <?php $controls->text('profile_error', 50); ?>
-                            </td>
-                        </tr>
-                    </table>
 
                     <table class="widefat">
                         <thead>

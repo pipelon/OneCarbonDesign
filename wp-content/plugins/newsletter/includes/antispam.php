@@ -5,7 +5,7 @@ class NewsletterAntispam {
     var $options;
     var $logger;
 
-    public function instance() {
+    public static function instance() {
         static $instance;
         if (!$instance) {
             $instance = new NewsletterAntispam();

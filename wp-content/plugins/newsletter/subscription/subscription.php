@@ -62,7 +62,6 @@ class NewsletterSubscription extends NewsletterModule {
         if (is_admin()) {
             add_action('admin_init', array($this, 'hook_admin_init'));
         } else {
-            add_action('wp_enqueue_scripts', array($this, 'hook_wp_enqueue_scripts'));
             // Shortcode for the Newsletter page
             add_shortcode('newsletter', array($this, 'shortcode_newsletter'));
             add_shortcode('newsletter_form', array($this, 'shortcode_newsletter_form'));
@@ -81,33 +80,6 @@ class NewsletterSubscription extends NewsletterModule {
             wp_register_script('tnp-blocks', NEWSLETTER_URL . '/includes/tnp-blocks.js', array('wp-blocks', 'wp-element', 'wp-editor'), NEWSLETTER_VERSION);
             register_block_type('tnp/minimal', array('editor_script' => 'tnp-blocks'));
         }
-    }
-
-    function hook_wp_enqueue_scripts() {
-
-        wp_enqueue_script('newsletter-subscription', plugins_url('newsletter') . '/subscription/validate.js', array(), NEWSLETTER_VERSION, true);
-
-        $options = $this->get_options('profile', $this->get_current_language());
-
-        $data = array();
-        $data['messages'] = array();
-        if (isset($options['email_error'])) {
-            $data['messages']['email_error'] = $options['email_error'];
-        }
-        if (isset($options['name_error'])) {
-            $data['messages']['name_error'] = $options['name_error'];
-        }
-        if (isset($options['surname_error'])) {
-            $data['messages']['surname_error'] = $options['surname_error'];
-        }
-        if (isset($options['profile_error'])) {
-            $data['messages']['profile_error'] = $options['profile_error'];
-        }
-        if (isset($options['privacy_error'])) {
-            $data['messages']['privacy_error'] = $options['privacy_error'];
-        }
-        $data['profile_max'] = NEWSLETTER_PROFILE_MAX;
-        wp_localize_script('newsletter-subscription', 'newsletter', $data);
     }
 
     /**
@@ -187,10 +159,12 @@ class NewsletterSubscription extends NewsletterModule {
                         $this->dienow('Registration failed.', $user->get_error_message(), 400);
                     }
 
-                    if ($user->status == TNP_User::STATUS_CONFIRMED)
+                    if ($user->status == TNP_User::STATUS_CONFIRMED) {
                         $this->show_message('confirmed', $user);
-                    if ($user->status == TNP_User::STATUS_NOT_CONFIRMED)
+                    }
+                    if ($user->status == TNP_User::STATUS_NOT_CONFIRMED) {
                         $this->show_message('confirmation', $user);
+                    }
                 } else {
                     $this->request_to_antibot_form('Subscribe', $captcha);
                 }
@@ -200,7 +174,6 @@ class NewsletterSubscription extends NewsletterModule {
             case 'ajaxsub':
 
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                    //$antibot_logger->fatal('HTTP method invalid');
                     $this->dienow('Invalid request');
                 }
 
@@ -312,7 +285,7 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     function first_install() {
-
+        
     }
 
     function admin_menu() {
@@ -535,7 +508,7 @@ class NewsletterSubscription extends NewsletterModule {
         if ($subscription->spamcheck) {
             // TODO: Use autoload
             require_once NEWSLETTER_INCLUDES_DIR . '/antispam.php';
-            $antispam = new NewsletterAntispam();
+            $antispam = NewsletterAntispam::instance();
             if ($antispam->is_spam($subscription)) {
                 return new WP_Error('spam', 'This looks like a spam subscription');
             }
@@ -997,16 +970,11 @@ class NewsletterSubscription extends NewsletterModule {
             $user->status = Newsletter::STATUS_NOT_CONFIRMED;
             delete_transient('newsletter_subscription_' . $user->id);
         } else {
-            // Is there any temporary data from a subscription to be confirmed?
-            $data = get_transient($this->get_user_key($user));
-            if ($data !== false) {
-                $_REQUEST = $data;
-                // Update the user profile since it's now confirmed
-                $user = $this->update_user_from_request((array) $user);
-                $user = $this->save_user($user);
-                delete_transient($this->get_user_key($user));
-                // Forced a fake status so the welcome email is sent
-                $user->status = Newsletter::STATUS_NOT_CONFIRMED;
+            $new_email = get_transient('newsletter_user_' . $user->id . '_email');
+            if ($new_email) {
+                $data = ['id'=>$user->id, 'email'=>$new_email];
+                $this->save_user($data);
+                delete_transient('newsletter_user_' . $user->id . '_email');
             }
         }
 
@@ -1136,51 +1104,11 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     function get_form_javascript() {
-        $this->setup_form_options();
-
-        $buffer = "\n\n";
-        $buffer .= '<script type="text/javascript">' . "\n";
-        $buffer .= '//<![CDATA[' . "\n";
-        $buffer .= 'if (typeof newsletter_check !== "function") {' . "\n";
-        $buffer .= 'window.newsletter_check = function (f) {' . "\n";
-        $buffer .= '    var re = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-]{1,})+\.)+([a-zA-Z0-9]{2,})+$/;' . "\n";
-        $buffer .= '    if (!re.test(f.elements["ne"].value)) {' . "\n";
-        $buffer .= '        alert("' . addslashes($this->form_options['email_error']) . '");' . "\n";
-        $buffer .= '        return false;' . "\n";
-        $buffer .= '    }' . "\n";
-        if ($this->form_options['name_status'] == 2 && $this->form_options['name_rules'] == 1) {
-            $buffer .= '    if (f.elements["nn"] && (f.elements["nn"].value == "" || f.elements["nn"].value == f.elements["nn"].defaultValue)) {' . "\n";
-            $buffer .= '        alert("' . addslashes($this->form_options['name_error']) . '");' . "\n";
-            $buffer .= '        return false;' . "\n";
-            $buffer .= '    }' . "\n";
-        }
-        if ($this->form_options['surname_status'] == 2 && $this->form_options['surname_rules'] == 1) {
-            $buffer .= '    if (f.elements["ns"] && (f.elements["ns"].value == "" || f.elements["ns"].value == f.elements["ns"].defaultValue)) {' . "\n";
-            $buffer .= '        alert("' . addslashes($this->form_options['surname_error']) . '");' . "\n";
-            $buffer .= '        return false;' . "\n";
-            $buffer .= '    }' . "\n";
-        }
-        $buffer .= '    for (var i=1; i<' . NEWSLETTER_PROFILE_MAX . '; i++) {' . "\n";
-        $buffer .= '    if (f.elements["np" + i] && f.elements["np" + i].required && f.elements["np" + i].value == "") {' . "\n";
-        $buffer .= '        alert("' . addslashes($this->form_options['profile_error']) . '");' . "\n";
-        $buffer .= '        return false;' . "\n";
-        $buffer .= '    }' . "\n";
-        $buffer .= '    }' . "\n";
-
-        $buffer .= '    if (f.elements["ny"] && !f.elements["ny"].checked) {' . "\n";
-        $buffer .= '        alert("' . addslashes($this->form_options['privacy_error']) . '");' . "\n";
-        $buffer .= '        return false;' . "\n";
-        $buffer .= '    }' . "\n";
-        $buffer .= '    return true;' . "\n";
-        $buffer .= '}' . "\n";
-        $buffer .= '}' . "\n";
-        $buffer .= '//]]>' . "\n";
-        $buffer .= '</script>' . "\n\n";
-        return $buffer;
+        
     }
 
     /**
-     * Manages the custom forms made with [newsletter_form] and internal [newsletter_field] shorcodes.
+     * Manages the custom forms made with [newsletter_form] and internal [newsletter_field] shortcodes.
      *
      * @param array $attrs
      * @param string $content
@@ -1202,31 +1130,7 @@ class NewsletterSubscription extends NewsletterModule {
 
         $language = $this->get_current_language();
 
-        $buffer .= '<input type="hidden" name="nlang" value="' . esc_attr($language) . '">' . "\n";
-
-        if (isset($attrs['referrer'])) {
-            $buffer .= '<input type="hidden" name="nr" value="' . esc_attr($attrs['referrer']) . '">' . "\n";
-        }
-
-        if (isset($attrs['optin'])) {
-            $buffer .= $this->build_optin_field($attrs['optin']);
-        }
-
-        if (isset($attrs['confirmation_url'])) {
-            if ($attrs['confirmation_url'] == '#') {
-                $attrs['confirmation_url'] = $_SERVER['REQUEST_URI'];
-            }
-            $buffer .= "<input type='hidden' name='ncu' value='" . esc_attr($attrs['confirmation_url']) . "'>\n";
-        }
-
-        // Compatibility
-        if (isset($attrs['list'])) {
-            $attrs['lists'] = $attrs['list'];
-        }
-
-        if (isset($attrs['lists'])) {
-            $buffer .= $this->_form_implicit_lists($attrs['lists'], $language);
-        }
+        $buffer .= $this->get_form_hidden_fields($attrs);
 
         $buffer .= do_shortcode($content);
 
@@ -1257,16 +1161,18 @@ class NewsletterSubscription extends NewsletterModule {
      * @param string $language ???
      * @return string
      */
-    function _form_implicit_lists($lists, $language) {
+    function get_form_implicit_lists($lists, $language = '') {
         $buffer = '';
+        
         $arr = explode(',', $lists);
-        if (!$arr) return'';
+
         foreach ($arr as $a) {
             $a = trim($a);
             if (empty($a)) continue;
-            $list = $this->get_list($a, $language);
+
+            $list = $this->get_list($a);
             if (!$list) {
-                $buffer .= $this->build_field_admin_notice('List ' . $a . ' added in the form is not configured, skipped.');
+                $buffer .= $this->build_field_admin_notice('List "' . $a . '" added to the form is not configured, skipped.');
                 continue;
             }
 
@@ -1286,6 +1192,55 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     /**
+     * Builds all the hidden fields of a subscription form. Implicit lists, confirmation url,
+     * referrer, language, ...
+     * 
+     * @param array $attrs Attributes of form shortcode
+     * @return string HTML with the hidden fields
+     */
+    function get_form_hidden_fields($attrs) {
+        $b = '';
+
+        // Compatibility
+        if (isset($attrs['list'])) {
+            $attrs['lists'] = $attrs['list'];
+        }
+        if (isset($attrs['lists'])) {
+            $b .= $this->get_form_implicit_lists($attrs['lists']);
+        }
+
+        if (isset($attrs['referrer'])) {
+            $b .= '<input type="hidden" name="nr" value="' . esc_attr($attrs['referrer']) . '">';
+        }
+
+        if (isset($attrs['confirmation_url'])) {
+            if ($attrs['confirmation_url'] === '#') {
+                $attrs['confirmation_url'] = $_SERVER['REQUEST_URI'];
+            }
+
+            $b .= '<input type="hidden" name="ncu" value="' . esc_attr($attrs['confirmation_url']) . '">';
+        }
+
+        if (isset($attrs['optin'])) {
+            $optin = trim(strtolower($attrs['optin']));
+            if ($optin !== 'double' && $optin !== 'single') {
+                $b .= $this->build_field_admin_notice('The optin is set to an invalid value.');
+            } else {
+                if ($optin !== 'double' && $this->is_double_optin() && empty($this->options['optin_override'])) {
+                    $b .= $this->build_field_admin_notice('The optin is specified but cannot be overridden (see the subscription configiraton page).');
+                } else {
+                    $b .= '<input type="hidden" name="optin" value="' . esc_attr($optin) . '">';
+                }
+            }
+        }
+
+        $language = $this->get_current_language();
+        $b .= '<input type="hidden" name="nlang" value="' . esc_attr($language) . '">';
+        
+        return $b;
+    }
+
+    /**
      * Internal use only
      *
      * @param type $name
@@ -1293,8 +1248,7 @@ class NewsletterSubscription extends NewsletterModule {
      * @param type $suffix
      * @return string
      */
-    function _shortcode_label($name, $attrs, $suffix = null) {
-        //$this->setup_form_options();
+    private function _shortcode_label($name, $attrs, $suffix = null) {
 
         if (!$suffix) {
             $suffix = $name;
@@ -1315,11 +1269,18 @@ class NewsletterSubscription extends NewsletterModule {
         return $buffer;
     }
 
+    /**
+     * Creates a notices to be displayed near a subscription form field to inform of worng configurations.
+     * It is created only if the current user looking at the form is the administrator.
+     * 
+     * @param string $message
+     * @return string
+     */
     function build_field_admin_notice($message) {
         if (!current_user_can('administrator')) {
             return '';
         }
-        return '<p style="background-color: #eee; color: #000; padding: 10px; margin: 10px 0">' . $message . ' <strong>This notice is shown only to administrators.</strong></p>';
+        return '<p style="background-color: #eee; color: #000; padding: 10px; margin: 10px 0">' . $message . ' <strong>This notice is shown only to administrators to help with configuration.</strong></p>';
     }
 
     function shortcode_newsletter_field($attrs, $content = '') {
@@ -1548,16 +1509,6 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     /**
-     * Returns the form html code for subscription.
-     *
-     * @return string The html code of the subscription form
-     * @deprecated since version 6.6.0
-     */
-    function get_subscription_form_html5($referrer = null, $action = null, $attrs = array()) {
-        return $this->get_subscription_form($referrer, $action, $attrs);
-    }
-
-    /**
      * Builds the privacy field only for completely generated forms.
      *
      * @return string Empty id the privacy filed is not configured
@@ -1587,50 +1538,29 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     /**
-     * Creates the hidden alternative optin field on custom form showing notices if used in the wrong
-     * way.
-     *
-     * @since 6.8.3
-     * @param string $optin Could be single or double, lowercase
-     * @return string The complete HTML field
-     */
-    function build_optin_field($optin) {
-        if (empty($optin)) {
-            return '';
-        }
-
-        if ($optin !== 'double' && $optin !== 'single') {
-            return $this->build_field_admin_notice('The optin is set to an invalid value.');
-        }
-
-        if ($optin !== 'double' && $this->is_double_optin() && empty($this->options['optin_override'])) {
-            return $this->build_field_admin_notice('The optin is specified but cannot be overridden (see the subscription configiraton page).');
-        }
-
-        $b = '<input type="hidden" name="optin" value="' . esc_attr($optin) . '">' . "\n";
-
-        return $b;
-    }
-
-    /**
      * The new standard form.
      *
-     * @param type $referrer
-     * @param type $action
-     * @param type $attrs
-     * @return string
+     * @param string $referrer Deprecated since 6.9.1, use the "referrer" key on $attrs
+     * @param string $action
+     * @param string $attrs
+     * @return string The full HTML form
      */
-    function get_subscription_form($referrer = '', $action = null, $attrs = array()) {
+    function get_subscription_form($referrer = '', $action = null, $attrs = []) {
         $language = $this->get_current_language();
         $options_profile = $this->get_options('profile', $language);
+        
+        if (!is_array($attrs)) {
+            $attrs = [];
+        }
 
         // Possible alternative form actions (used by...?)
         if (isset($attrs['action'])) {
             $action = $attrs['action'];
         }
 
-        if (isset($attrs['referrer'])) {
-            $referrer = $attrs['referrer'];
+        // The referrer parameter is deprecated
+        if (!empty($referrer)) {
+            $attrs['referrer'] = $referrer;
         }
 
         $buffer = '';
@@ -1639,36 +1569,19 @@ class NewsletterSubscription extends NewsletterModule {
             $action = $this->build_action_url('s');
         }
 
-        if ($referrer != 'widget') {
+        if (isset($attrs['before'])) {
+            $buffer .= $attrs['before'];
+        } else {
             if (isset($attrs['class'])) {
                 $buffer .= '<div class="tnp tnp-subscription ' . $attrs['class'] . '">' . "\n";
             } else {
                 $buffer .= '<div class="tnp tnp-subscription">' . "\n";
             }
         }
-        $buffer .= '<form method="post" action="' . esc_attr($action) . '" onsubmit="return newsletter_check(this)">' . "\n\n";
 
-        $buffer .= '<input type="hidden" name="nlang" value="' . esc_attr($language) . '">' . "\n";
+        $buffer .= '<form method="post" action="' . esc_attr($action) . '">' . "\n\n";
 
-        if (!empty($attrs['optin'])) {
-            $buffer .= $this->build_optin_field($attrs['optin']);
-        }
-
-        if (!empty($referrer)) {
-            $buffer .= '<input type="hidden" name="nr" value="' . esc_attr($referrer) . '">' . "\n";
-        }
-        if (isset($attrs['confirmation_url'])) {
-            $buffer .= "<input type='hidden' name='ncu' value='" . esc_attr($attrs['confirmation_url']) . "'>\n";
-        }
-
-        // Compatibility
-        if (isset($attrs['list'])) {
-            $attrs['lists'] = $attrs['list'];
-        }
-
-        if (isset($attrs['lists'])) {
-            $buffer .= $this->_form_implicit_lists($attrs['lists'], $language);
-        }
+        $buffer .= $this->get_form_hidden_fields($attrs);
 
         if ($options_profile['name_status'] == 2) {
             $buffer .= $this->shortcode_newsletter_field(['name' => 'first_name']);
@@ -1705,6 +1618,7 @@ class NewsletterSubscription extends NewsletterModule {
             $buffer .= $this->shortcode_newsletter_field(['name' => 'profile', 'number' => $i]);
         }
 
+        // Deprecated
         $extra = apply_filters('newsletter_subscription_extra', array());
         foreach ($extra as $x) {
             $label = $x['label'];
@@ -1735,20 +1649,14 @@ class NewsletterSubscription extends NewsletterModule {
         }
 
         $buffer .= "</div>\n</form>\n";
-        if ($referrer != 'widget') {
+
+        if (isset($attrs['after'])) {
+            $buffer .= $attrs['after'];
+        } else {
             $buffer .= "</div>\n";
         }
-        return $buffer;
-    }
 
-    /**
-     *
-     * @deprecated since version 6.0.0
-     * @param type $user
-     * @return type
-     */
-    function get_profile_form($user) {
-        return NewsletterProfile::instance()->get_profile_form($user);
+        return $buffer;
     }
 
     function get_form($number) {
@@ -1811,7 +1719,6 @@ class NewsletterSubscription extends NewsletterModule {
      */
     function get_subscription_form_minimal($attrs) {
 
-        $language = $this->get_current_language();
         $this->setup_form_options();
 
         if (!is_array($attrs)) {
@@ -1828,19 +1735,8 @@ class NewsletterSubscription extends NewsletterModule {
         $form .= '<div class="tnp tnp-subscription-minimal ' . $attrs['class'] . '">';
         $form .= '<form action="' . esc_attr($this->build_action_url('s')) . '" method="post">';
 
-        if (isset($attrs['optin'])) {
-            $form .= $this->build_optin_field($attrs['optin']);
-        }
+        $form .= $this->get_form_hidden_fields($attrs);
 
-        if (isset($attrs['confirmation_url'])) {
-            $form .= "<input type='hidden' name='ncu' value='" . esc_attr($attrs['confirmation_url']) . "'>\n";
-        }
-
-        if (isset($attrs['lists'])) {
-            $form .= $this->_form_implicit_lists($attrs['lists'], $language);
-        }
-        $form .= '<input type="hidden" name="nr" value="' . esc_attr($attrs['referrer']) . '">';
-        $form .= '<input type="hidden" name="nlang" value="' . esc_attr($language) . '">' . "\n";
         $form .= '<input class="tnp-email" type="email" required name="ne" value="" placeholder="' . esc_attr($attrs['placeholder']) . '">';
         $form .= '<input class="tnp-submit" type="submit" value="' . esc_attr($attrs['button']) . '"'
                 . ' style="background-color:' . esc_attr($attrs['button_color']) . '">';
@@ -1854,7 +1750,7 @@ class NewsletterSubscription extends NewsletterModule {
 
     function shortcode_newsletter_form($attrs, $content) {
 
-        if (isset($attrs['type']) && $attrs['type'] == 'minimal') {
+        if (isset($attrs['type']) && $attrs['type'] === 'minimal') {
             return $this->get_subscription_form_minimal($attrs);
         }
 
@@ -1906,14 +1802,12 @@ class NewsletterSubscription extends NewsletterModule {
             }
         }
 
-
         // Now check what form must be added
         if ($message_key == 'subscription') {
 
             // Compatibility check
             if (stripos($message, '<form') !== false) {
-                $message .= $this->get_form_javascript();
-                $message = str_ireplace('<form', '<form method="post" action="' . esc_attr($this->get_subscribe_url()) . '" onsubmit="return newsletter_check(this)"', $message);
+                $message = str_ireplace('<form', '<form method="post" action="' . esc_attr($this->get_subscribe_url()) . '"', $message);
             } else {
 
                 if (strpos($message, '{subscription_form') === false) {

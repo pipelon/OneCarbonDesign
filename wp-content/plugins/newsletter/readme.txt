@@ -1,8 +1,8 @@
 === Newsletter ===
 Tags: email, email marketing, newsletter, newsletter subscribers, welcome email, signup forms, contact, lead generation, popup, marketing automation
 Requires at least: 3.4.0
-Tested up to: 5.5.1
-Stable tag: 6.9.3
+Tested up to: 5.5.3
+Stable tag: 6.9.5
 Requires PHP: 5.6
 Contributors: satollo,webagile,michael-travan
 
@@ -52,6 +52,8 @@ Improve The Newsletter Plugin with these free addons:
 * [Locked Content](https://www.thenewsletterplugin.com/documentation/locked-content-extension) - open up your premium content only after subscription
 * [Newsletter REST API](https://www.thenewsletterplugin.com/documentation/developers/newsletter-api-2/) - adds a tier of REST api to integrate with the Newsletter core services
 * [BuddyPress integration](https://wordpress.org/plugins/newsletter-buddypress/) - subscription opt-in inside BuddyPress signup form
+* [Sendinblue integration](https://www.thenewsletterplugin.com/documentation/addons/delivery-addons/sendinblue-extension/) - deliver your newsletters with Sendinblue
+
 
 (*easily add them from our [Addons panel](https://www.thenewsletterplugin.com/documentation/install-extensions)*)
 
@@ -59,11 +61,11 @@ Improve The Newsletter Plugin with these free addons:
 
 Need *more power*? Feel *something's missing*? The Newsletter Plugin features can be easily extended through our **premium, professional Addons**! Let us introduce just two of them : )
 
+* [Automated](https://www.thenewsletterplugin.com/automated) - generates and sends your newsletters using your blog last posts, even custom ones like events or products. Just sit and watch!
+* [Autoresponder](https://www.thenewsletterplugin.com/autoresponder) - creates email series to follow up your subscribers
 * [Extended Composer Blocks](https://www.thenewsletterplugin.com/composer) - adds new blocks to the drag & drop composer
 * [WooCommerce Integration](https://www.thenewsletterplugin.com/woocommerce) - subscribe customers to a mailing list and generate product newletters.
 * [Reports](https://www.thenewsletterplugin.com/reports) - improves the internal statistics collection system and provides better reports of data collected for each sent email. And retargeting. Neat.
-* [Automated](https://www.thenewsletterplugin.com/automated) - generates and sends your newsletters using your blog last posts, even custom ones like events or products. Just sit and watch!
-* [Autoresponder](https://www.thenewsletterplugin.com/autoresponder) - creates email series to follow up your subscribers
 * [Leads](https://www.thenewsletterplugin.com/leads) adds a fancy subscription popup box or a fixed bar to your website that will boost your conversion rate
 * [Amazon SES and other mail providers integration](https://www.thenewsletterplugin.com/integrations) - seamlessly integrate Amazon SES and other email service providers with The Newsletter Plugin. Hassle-free.
 * [Contact Form 7 Integration](https://www.thenewsletterplugin.com/documentation/contact-form-7-extension) - integrate the subscription on Contact Form 7 forms
@@ -113,13 +115,29 @@ Thank you, The Newsletter Team
 
 == Changelog ==
 
+= 6.9.5 =
+
+* Added pagination on newsletters page table
+* Changed label text for empty language in edit user page
+* Added preheader text on email
+* If email is paused but scheduled in the future it is now possible to change the sending date
+* Fixed font weight selection for titles on posts block
+
+= 6.9.4 =
+
+* Fixed the profile save
+* Improved the email change management from the subscriber data page
+* Removed custom javascript and opted for HTML5 validation (you can use a polyfill plugin like parsely)
+* Removed custom error messages (see above)
+* Check on delivery speed to be minimum 10 emails per hour
+
 = 6.9.3 =
 
 * Fixed profile saving spam check
 
 = 6.9.2 =
 
-* Fixed TNP::subscribe() error
+* Fixed error on TNP::subscribe()
 
 = 6.9.1 =
 

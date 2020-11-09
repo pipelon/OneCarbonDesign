@@ -27,14 +27,15 @@ class NewsletterWidget extends WP_Widget {
         $options_profile = get_option('newsletter_profile');
         $form = '';
 
-        $form .= '<div class="tnp tnp-widget">';
         $form .= NewsletterSubscription::instance()->get_subscription_form('widget', null, array(
+            'referrer'=>'widget',
+            'before'=>'<div class="tnp tnp-widget">',
+            'after'=>'</div>',
             'list' => implode(',', $instance['nl']),
             'lists_field_layout' => $instance['lists_layout'],
             'lists_field_empty_label' => $instance['lists_empty_label'],
             'lists_field_label' => $instance['lists_field_label'],
         ));
-        $form .= "</div>\n";
 
         return $form;
     }
@@ -77,7 +78,7 @@ class NewsletterWidget extends WP_Widget {
                 }
             }
         } else {
-            $buffer = str_ireplace('<form', '<form method="post" action="' . esc_attr($newsletter->get_subscribe_url())  . '" onsubmit="return newsletter_check(this)"', $buffer);
+            $buffer = str_ireplace('<form', '<form method="post" action="' . esc_attr($newsletter->get_subscribe_url())  . '"', $buffer);
             $buffer = str_ireplace('</form>', '<input type="hidden" name="nr" value="widget"/></form>', $buffer);
         }
 

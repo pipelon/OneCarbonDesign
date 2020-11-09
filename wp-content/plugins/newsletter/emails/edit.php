@@ -316,19 +316,18 @@ if ($email['status'] != 'sent') {
                         <?php } ?>
 
                         <?php if ($email['status'] != 'sending' && $email['status'] != 'sent') $controls->button_save(); ?>
-                        <?php if ($email['status'] == 'new') { ?>
-                            <?php $controls->button_confirm('send', __('Send now', 'newsletter'), __('Start real delivery?', 'newsletter')); ?>
-                            <a id="tnp-schedule-button" class="button-secondary" href="javascript:tnp_toggle_schedule()"><i class="far fa-clock"></i> <?php _e("Schedule") ?></a>
-                            <span id="tnp-schedule" style="display: none;">
-                                <?php $controls->datetime('send_on') ?>
-                                <?php $controls->button_confirm('schedule', __('Schedule', 'newsletter'), __('Schedule delivery?', 'newsletter')); ?>
-                                <a class="button-secondary tnp-button-cancel" href="javascript:tnp_toggle_schedule()"><?php _e("Cancel") ?></a>
-                            </span>
-                        <?php } ?>
+	                    <?php if ($email['status'] == 'new' ) $controls->button_confirm('send', __('Send now', 'newsletter'), __('Start real delivery?', 'newsletter')); ?>
                         <?php if ($email['status'] == 'sending') $controls->button_confirm('pause', __('Pause', 'newsletter'), __('Pause the delivery?', 'newsletter')); ?>
                         <?php if ($email['status'] == 'paused') $controls->button_confirm('continue', __('Continue', 'newsletter'), 'Continue the delivery?'); ?>
                         <?php if ($email['status'] == 'paused') $controls->button_confirm('abort', __('Stop', 'newsletter'), __('This totally stop the delivery, ok?', 'newsletter')); ?>
-
+	                    <?php if ($email['status'] == 'new' || ( $email['status'] == 'paused' && $email['send_on'] > time() )) { ?>
+                            <a id="tnp-schedule-button" class="button-secondary" href="javascript:tnp_toggle_schedule()"><i class="far fa-clock"></i> <?php _e("Schedule") ?></a>
+                            <span id="tnp-schedule" style="display: none;">
+                                <?php $controls->datetime('send_on') ?>
+			                    <?php $controls->button_confirm('schedule', __('Schedule', 'newsletter'), __('Schedule delivery?', 'newsletter')); ?>
+                                <a class="button-secondary tnp-button-cancel" href="javascript:tnp_toggle_schedule()"><?php _e("Cancel") ?></a>
+                            </span>
+	                    <?php } ?>
                     </div>
 
                     <?php $controls->text('subject', null, 'Subject'); ?>

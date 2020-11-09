@@ -4,7 +4,7 @@
   Plugin Name: Newsletter
   Plugin URI: https://www.thenewsletterplugin.com/plugins/newsletter
   Description: Newsletter is a cool plugin to create your own subscriber list, to send newsletters, to build your business. <strong>Before update give a look to <a href="https://www.thenewsletterplugin.com/category/release">this page</a> to know what's changed.</strong>
-  Version: 6.9.3
+  Version: 6.9.5
   Author: Stefano Lissa & The Newsletter Team
   Author URI: https://www.thenewsletterplugin.com
   Disclaimer: Use at your own risk. No warranty expressed or implied is provided.
@@ -35,16 +35,12 @@ if (version_compare(phpversion(), '5.6', '<')) {
     return;
 }
 
-define('NEWSLETTER_VERSION', '6.9.3');
+define('NEWSLETTER_VERSION', '6.9.5');
 
 global $newsletter, $wpdb;
 
 if (!defined('NEWSLETTER_BETA'))
     define('NEWSLETTER_BETA', false);
-
-// For acceptance tests, DO NOT CHANGE
-if (!defined('NEWSLETTER_ANTIBOT'))
-    define('NEWSLETTER_ANTIBOT', true);
 
 // For acceptance tests, DO NOT CHANGE
 if (!defined('NEWSLETTER_DEBUG'))
@@ -960,8 +956,15 @@ class Newsletter extends NewsletterModule {
         return $this->mailer;
     }
 
+    /**
+     * 
+     * @param TNP_Mailer_Message $message
+     * @return type
+     */
     function deliver($message) {
         $mailer = $this->get_mailer();
+        if (empty($message->from)) $message->from = $this->options['sender_email'];
+        if (empty($message->from_name)) $mailer->from_name = $this->options['sender_name'];
         return $mailer->send($message);
     }
 
@@ -995,6 +998,8 @@ class Newsletter extends NewsletterModule {
                 $mailer_message->body = $this->clean_eol($message['html']);
             }
         }
+        
+        $this->logger->debug($mailer_message);
 
         $mailer = $this->get_mailer();
 

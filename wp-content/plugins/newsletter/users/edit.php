@@ -146,14 +146,14 @@ function percentValue($value, $total) {
                         <tr>
                             <th><?php _e('Status', 'newsletter'); ?></th>
                             <td>
-                                <?php $controls->select('status', array('C' => __('Confirmed', 'newsletter'), 'S' => __('Not confirmed', 'newsletter'), 
+                                <?php $controls->select('status', array('C' => __('Confirmed', 'newsletter'), 'S' => __('Not confirmed', 'newsletter'),
                                     'U' => __('Unsubscribed', 'newsletter'), 'B' => __('Bounced', 'newsletter'))); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Language', 'newsletter'); ?></th>
                             <td>
-                                <?php $controls->language(); ?>
+                                <?php $controls->language('language', __('None', 'newsletter') ); ?>
                             </td>
                         </tr>
                         <tr>

@@ -33,6 +33,9 @@ if (!$controls->is_action()) {
         } else {
             $controls->data['return_path'] = $this->normalize_email($controls->data['return_path']);
         }
+        
+        $controls->data['scheduler_max'] = (int)$controls->data['scheduler_max'];
+        if ($controls->data['scheduler_max'] < 10) $controls->data['scheduler_max'] = 10;
 
 
         if (!$this->is_email($controls->data['reply_to'], true)) {
@@ -240,7 +243,7 @@ if (!empty($return_path)) {
                                 <?php $controls->field_help('https://www.thenewsletterplugin.com/documentation/delivery-and-spam/newsletter-delivery-engine/') ?>
                             </th>
                             <td>
-                                <?php $controls->text('scheduler_max', 5); ?>
+                                <?php $controls->text('scheduler_max', 5); ?> (min. 10)
                             </td>
                         </tr>
                     </table>

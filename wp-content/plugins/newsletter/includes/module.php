@@ -107,6 +107,10 @@ class TNP_Profile {
         return $this->status == self::STATUS_PRIVATE;
     }
 
+    function show_on_profile() {
+        return $this->status == self::STATUS_PROFILE_ONLY || $this->status == self::STATUS_PUBLIC;
+    }
+
 }
 
 class TNP_Profile_Service {
@@ -654,8 +658,9 @@ class NewsletterModule {
      * returns false.
      */
     static function normalize_email($email) {
-        if (!is_string($email))
+        if (!is_string($email)) {
             return false;
+        }
         $email = strtolower(trim($email));
         if (!is_email($email)) {
             return false;
@@ -682,8 +687,9 @@ class NewsletterModule {
 
     static function is_email($email, $empty_ok = false) {
 
-        if (!is_string($email))
+        if (!is_string($email)) {
             return false;
+        }
         $email = strtolower(trim($email));
 
         if ($email == '') {
@@ -1053,7 +1059,7 @@ class NewsletterModule {
         return $email->total > 0 ? intval($email->sent / $email->total * 100) : 0;
     }
 
-    function show_email_progress_bar($email, $attrs = array()) {
+    function show_email_progress_bar($email, $attrs = []) {
 
         $email = (object) $email;
 
@@ -1063,6 +1069,7 @@ class NewsletterModule {
             if ($attrs['scheduled']) {
                 echo '<span class="tnp-progress-date">', $this->format_date($email->send_on), '</span>';
             }
+	        return;
         } else if ($email->status == 'new') {
             echo '';
             return;
@@ -1072,11 +1079,6 @@ class NewsletterModule {
             $percent = $this->get_email_progress($email);
         }
 
-
-        $label = $percent;
-        if ($attrs['format'] == 'numbers') {
-            $label = $email->sent . ' ' . __('of', 'newsletter') . ' ' . $email->total;
-        }
         echo '<div class="tnp-progress ', $email->status, '">';
         echo '<div class="tnp-progress-bar" role="progressbar" style="width: ', $percent, '%;">&nbsp;', $percent, '%&nbsp;</div>';
         echo '</div>';
@@ -1332,6 +1334,51 @@ class NewsletterModule {
      */
     function get_profiles($language = '') {
         return TNP_Profile_Service::get_profiles($language);
+    }
+
+    /**
+     * Returns a list of TNP_Profile which are public.
+     *
+     * @staticvar array $profiles
+     * @param string $language
+     * @return TNP_Profile[]
+     */
+    function get_profiles_public($language = '') {
+        static $profiles = [];
+        if (isset($profiles[$language])) {
+            return $profiles[$language];
+        }
+
+        $profiles[$language] = [];
+        $all = $this->get_profiles($language);
+        foreach ($all as $profile) {
+            if ($profile->is_private()) continue;
+
+            $profiles[$language]['' . $profile->id] = $profile;
+        }
+        return $profiles[$language];
+    }
+
+    /**
+     * Really bad name!
+     * @staticvar array $profiles
+     * @param type $language
+     * @return array
+     */
+    function get_profiles_for_profile($language = '') {
+        static $profiles = [];
+        if (isset($profiles[$language])) {
+            return $profiles[$language];
+        }
+
+        $profiles[$language] = [];
+        $all = $this->get_profiles($language);
+        foreach ($all as $profile) {
+            if (!$profile->show_on_profile()) continue;
+
+            $profiles[$language]['' . $profile->id] = $profile;
+        }
+        return $profiles[$language];
     }
 
     /**
@@ -2014,8 +2061,9 @@ class NewsletterModule {
 
     public static function antibot_form_check($captcha = false) {
 
-        if (!NEWSLETTER_ANTIBOT)
-            return true;
+	    if ( defined( 'NEWSLETTER_ANTIBOT' ) && ! NEWSLETTER_ANTIBOT ) {
+		    return true;
+	    }
 
         if (strtolower($_SERVER['REQUEST_METHOD']) != 'post') {
             return false;

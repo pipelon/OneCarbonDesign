@@ -2,6 +2,8 @@
 defined('ABSPATH') || exit;
 
 require_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
+require_once NEWSLETTER_INCLUDES_DIR . '/paginator.php';
+
 $controls = new NewsletterControls();
 $module = NewsletterEmails::instance();
 
@@ -31,7 +33,17 @@ if ($controls->is_action('delete_selected')) {
     $controls->messages .= $r . ' message(s) deleted';
 }
 
-$emails = $module->get_emails('message');
+/* ====================================== */
+/* ======= PAGINATION CONTROLLERS ======= */
+/* ====================================== */
+
+$pagination_controller = new TNP_Pagination_Controller( NEWSLETTER_EMAILS_TABLE, 'id', [ 'type' => 'message' ] );
+$emails                = $pagination_controller->get_items();
+
+/* ====================================== */
+/* ===== END PAGINATION CONTROLLERS ===== */
+/* ====================================== */
+
 ?>
 
 <div class="wrap tnp-emails tnp-emails-index" id="tnp-wrap">
@@ -49,10 +61,11 @@ $emails = $module->get_emails('message');
         <form method="post" action="">
             <?php $controls->init(); ?>
 
-            <p>
-                <a href="<?php echo $module->get_admin_page_url('theme'); ?>" class="button-primary"><?php _e('New newsletter', 'newsletter') ?></a>
-                <?php $controls->button_confirm('delete_selected', __('Delete selected newsletters', 'newsletter')); ?>
-            </p>
+            <a href="<?php echo $module->get_admin_page_url('theme'); ?>" class="button-primary"><?php _e('New newsletter', 'newsletter') ?></a>
+	        <?php $controls->button_confirm('delete_selected', __('Delete selected newsletters', 'newsletter')); ?>
+
+            <?php $pagination_controller->display_paginator(); ?>
+
             <table class="widefat tnp-newsletters-list" style="width: 100%">
                 <thead>
                     <tr>
@@ -94,7 +107,7 @@ $emails = $module->get_emails('message');
                             <td>
                                 <?php echo $module->get_edit_button($email) ?>
                             </td>
-                            
+
                             <td>
                                 <a class="button-primary" href="<?php echo NewsletterStatistics::instance()->get_statistics_url($email->id); ?>"><i class="fa fa-chart-bar"></i> <?php _e('Statistics', 'newsletter') ?></a>
                             </td>
