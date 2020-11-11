@@ -9,9 +9,7 @@ $current_language = $this->get_current_language();
 
 $is_all_languages = $this->is_all_languages();
 
-if (!$is_all_languages) {
-    $controls->warnings[] = 'You are configuring the language <strong>' . $current_language . '</strong>. Switch to "all languages" to see all options.';
-}
+$controls->add_language_warning();
 
 if (!$controls->is_action()) {
     $controls->data = $this->get_options('', $current_language);
@@ -93,7 +91,12 @@ if (!$controls->is_action()) {
                             </td>
                         </tr>
 
-                        <tr>
+                    </table>
+                    
+                    <h3>Advanced</h3>
+                    <?php if ($is_all_languages) { ?>
+                    <table class="form-table">
+                    <tr>
                             <th><?php _e('Cancellation requests via email', 'newsletter') ?></th>
                             <td>
                                 <?php $controls->text_email('list_unsubscribe_mailto_header'); ?>
@@ -116,6 +119,11 @@ if (!$controls->is_action()) {
                             </td>
                         </tr>
                     </table>
+                    <?php } else { ?>
+                    
+                    <?php $controls->switch_to_all_languages_notice(); ?>
+                       
+                    <?php } ?>
                 </div>
 
                 <div id="tabs-reactivation">

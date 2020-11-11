@@ -270,9 +270,26 @@ class TNP_Composer {
         return false;
     }
 
+    /**
+     * Creates the HTML for a button extrating from the options, with the provided prefix, the button attributes:
+     * 
+     * - [prefix]_url The button URL
+     * - [prefix]_font_family
+     * - [prefix]_font_size
+     * - [prefix]_font_weight
+     * - [prefix]_label
+     * - [prefix]_font_color The label color
+     * - [prefix]_background The button color
+     * 
+     * TODO: Add radius and possiblt the alignment
+     * 
+     * @param array $options
+     * @param string $prefix
+     * @return string
+     */
     static function button($options, $prefix = 'button') {
         $defaults = [
-            'button_url' => '#',
+            $prefix . '_url' => '#',
             $prefix . '_font_family' => 'Helvetica, Arial, sans-serif',
             $prefix . '_label' => 'Click Here',
             $prefix . '_font_color' => '#ffffff',

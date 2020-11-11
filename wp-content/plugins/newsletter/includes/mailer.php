@@ -112,14 +112,13 @@ class NewsletterMailer {
     }
 
     /**
-     *
      * @return NewsletterLogger
      */
     function get_logger() {
         if ($this->logger) {
             return $this->logger;
         }
-        $this->logger = new NewsletterLogger('mailer-' . $this->name);
+        $this->logger = new NewsletterLogger($this->name . '-mailer');
         return $this->logger;
     }
 

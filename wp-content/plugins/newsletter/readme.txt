@@ -2,9 +2,11 @@
 Tags: email, email marketing, newsletter, newsletter subscribers, welcome email, signup forms, contact, lead generation, popup, marketing automation
 Requires at least: 3.4.0
 Tested up to: 5.5.3
-Stable tag: 6.9.5
+Stable tag: 6.9.6
 Requires PHP: 5.6
 Contributors: satollo,webagile,michael-travan
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Add a real newsletter system to your blog. For free. With unlimited newsletters and subscribers.
 
@@ -114,6 +116,16 @@ Thank you, The Newsletter Team
 3. The Reports extension
 
 == Changelog ==
+
+= 6.9.6 =
+
+* Added 3 months option for inactive subscriber selection
+* Improved the add-ons classes
+* Improved admin messages for multilanguage blogs
+* Updated link to documentation on main settings
+* Added VK and Telegram socials
+* Removed the old bounce import on subscribe maintenance panel
+* Added Telegram and VK icon on social block component
 
 = 6.9.5 =
 

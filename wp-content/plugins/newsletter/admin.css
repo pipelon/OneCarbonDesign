@@ -2460,3 +2460,8 @@ span.tnp-email-status-sent {
 .tab-min-height {
     min-height: 500px;
 }
+
+.tnp-control-all-languages-notice {
+    padding: 15px;
+    border: 1px dashed #999;
+}

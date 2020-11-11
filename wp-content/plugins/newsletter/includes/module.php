@@ -363,6 +363,8 @@ class NewsletterModule {
      */
     var $themes;
     var $components;
+    
+    static $current_language = '';
 
     function __construct($module, $version, $module_id = null, $components = array()) {
         $this->module = $module;
@@ -2245,6 +2247,10 @@ class NewsletterModule {
         $text = str_replace("\n", "\r\n", $text);
         return $text;
     }
+    
+    function set_current_language($language) {
+        self::$current_language = $language;
+    }
 
     /**
      * Return the current language code. Optionally, if a user is passed and it has a language
@@ -2258,6 +2264,10 @@ class NewsletterModule {
 
         if ($user && $user->language) {
             return $user->language;
+        }
+        
+        if (!empty(self::$current_language)) {
+            return self::$current_language;
         }
 
         // WPML

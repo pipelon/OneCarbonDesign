@@ -285,15 +285,15 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     function first_install() {
-        
+
     }
 
     function admin_menu() {
         $this->add_menu_page('options', 'List building');
-        $this->add_menu_page('antibot', 'Security');
-        $this->add_admin_page('profile', 'Subscription Form');
-        $this->add_admin_page('forms', 'Forms');
         $this->add_admin_page('lists', 'Lists');
+        $this->add_admin_page('profile', 'Subscription Form');
+        $this->add_menu_page('antibot', 'Security');
+        $this->add_admin_page('forms', 'Forms');
         $this->add_admin_page('template', 'Template');
     }
 
@@ -1104,7 +1104,7 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     function get_form_javascript() {
-        
+
     }
 
     /**
@@ -1156,14 +1156,14 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     /** Generates the hidden field for lists which should be implicitely set with a subscription form.
-     * 
+     *
      * @param string $lists Comma separated directly from the shortcode "lists" attribute
      * @param string $language ???
      * @return string
      */
     function get_form_implicit_lists($lists, $language = '') {
         $buffer = '';
-        
+
         $arr = explode(',', $lists);
 
         foreach ($arr as $a) {
@@ -1194,7 +1194,7 @@ class NewsletterSubscription extends NewsletterModule {
     /**
      * Builds all the hidden fields of a subscription form. Implicit lists, confirmation url,
      * referrer, language, ...
-     * 
+     *
      * @param array $attrs Attributes of form shortcode
      * @return string HTML with the hidden fields
      */
@@ -1236,7 +1236,7 @@ class NewsletterSubscription extends NewsletterModule {
 
         $language = $this->get_current_language();
         $b .= '<input type="hidden" name="nlang" value="' . esc_attr($language) . '">';
-        
+
         return $b;
     }
 
@@ -1272,7 +1272,7 @@ class NewsletterSubscription extends NewsletterModule {
     /**
      * Creates a notices to be displayed near a subscription form field to inform of worng configurations.
      * It is created only if the current user looking at the form is the administrator.
-     * 
+     *
      * @param string $message
      * @return string
      */
@@ -1387,12 +1387,12 @@ class NewsletterSubscription extends NewsletterModule {
             if (isset($attrs['layout']) && $attrs['layout'] === 'dropdown') {
 
                 $buffer .= '<div class="tnp-field tnp-lists">';
+	            // There is not a default "label" for the block of lists, so it can only be specified in the shortcode attrs as "label"
+	            $buffer .= $this->_shortcode_label('lists', $attrs);
                 $buffer .= '<select class="tnp-lists" name="nl[]" required>';
-                // There is not a default "label" for the block of lists, so it can only be specified in the shortcode attrs as "label"
-                $buffer .= $this->_shortcode_label('lists', $attrs);
 
                 if (!empty($attrs['first_option_label'])) {
-                    $buffer .= '<option value="">' . esc_html($attrs['first_option_label']) . '</option>';
+                    $buffer .= '<option value="" selected="true" disabled="disabled">' . esc_html($attrs['first_option_label']) . '</option>';
                 }
 
                 foreach ($lists as $list) {
@@ -1548,7 +1548,7 @@ class NewsletterSubscription extends NewsletterModule {
     function get_subscription_form($referrer = '', $action = null, $attrs = []) {
         $language = $this->get_current_language();
         $options_profile = $this->get_options('profile', $language);
-        
+
         if (!is_array($attrs)) {
             $attrs = [];
         }
@@ -1603,7 +1603,10 @@ class NewsletterSubscription extends NewsletterModule {
             if (empty($attrs['lists_field_empty_label'])) {
                 $attrs['lists_field_empty_label'] = '';
             }
-            $buffer .= $this->shortcode_newsletter_field(['name' => 'lists', 'layout' => 'dropdown', 'first_option_label' => $attrs['lists_field_empty_label']]);
+	        if (empty($attrs['lists_field_label'])) {
+		        $attrs['lists_field_label'] = '';
+	        }
+            $buffer .= $this->shortcode_newsletter_field(['name' => 'lists', 'layout' => 'dropdown', 'first_option_label' => $attrs['lists_field_empty_label'], 'label' => $attrs['lists_field_label']]);
         } else {
             $buffer .= $this->shortcode_newsletter_field(['name' => 'lists']);
         }
@@ -1711,9 +1714,9 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     /**
-     * Builds the minimal subscription form, with only the email field and inline 
+     * Builds the minimal subscription form, with only the email field and inline
      * submit button. If enabled the privacy checkbox is added.
-     * 
+     *
      * @param type $attrs
      * @return string
      */

@@ -109,9 +109,9 @@ $emails                = $pagination_controller->get_items();
                             </td>
 
                             <td>
-                                <a class="button-primary" href="<?php echo NewsletterStatistics::instance()->get_statistics_url($email->id); ?>"><i class="fa fa-chart-bar"></i> <?php _e('Statistics', 'newsletter') ?></a>
+                                <a class="button-primary" href="<?php echo NewsletterStatistics::instance()->get_statistics_url($email->id); ?>"><i class="fas fa-chart-bar"></i> <?php _e('Statistics', 'newsletter') ?></a>
                             </td>
-                            <td><a class="button-primary" target="_blank" rel="noopener" href="<?php echo home_url('/')?>?na=view&id=<?php echo $email->id; ?>"><i class="fa fa-eye"></i>&nbsp;<?php _e('View', 'newsletter')?></a></td>
+                            <td><a class="button-primary" target="_blank" rel="noopener" href="<?php echo home_url('/')?>?na=view&id=<?php echo $email->id; ?>"><i class="fas fa-eye"></i>&nbsp;<?php _e('View', 'newsletter')?></a></td>
                             <td><?php $controls->button_copy($email->id); ?></td>
                             <td><?php $controls->button_delete($email->id); ?></td>
                         </tr>

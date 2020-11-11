@@ -427,6 +427,12 @@ class NewsletterControls {
         }
         $this->warnings[] = 'You are configuring the language <strong>' . $newsletter->get_language_label($current_language) . '</strong>. Switch to "all languages" to see all options.';
     }
+    
+    function switch_to_all_languages_notice() {
+        echo '<div class="tnp-control-all-languages-notice">';
+        _e('Switch the administration side to "all languages" to set these options', 'newsletter');
+        echo '</div>';
+    }
 
     function hint($text, $url = '') {
         echo '<div class="hints">';
@@ -1208,6 +1214,11 @@ class NewsletterControls {
         $lists = $this->get_list_options($empty_label);
         $this->select($name, $lists);
     }
+    
+    function public_lists_select($name = 'list', $empty_label = null) {
+        $lists = $this->get_public_list_options($empty_label);
+        $this->select($name, $lists);
+    }
 
     /**
      * Generates an associative array with the active lists to be used in a select.
@@ -1225,6 +1236,18 @@ class NewsletterControls {
         }
         return $lists;
     }
+    
+    function get_public_list_options($empty_label = null) {
+        $objs = Newsletter::instance()->get_lists_public();
+        $lists = array();
+        if ($empty_label) {
+            $lists[''] = $empty_label;
+        }
+        foreach ($objs as $list) {
+            $lists['' . $list->id] = '(' . $list->id . ') ' . esc_html($list->name);
+        }
+        return $lists;
+    }    
 
     function date($name) {
         $this->hidden($name);
