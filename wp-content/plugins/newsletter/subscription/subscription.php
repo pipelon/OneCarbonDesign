@@ -1415,14 +1415,21 @@ class NewsletterSubscription extends NewsletterModule {
             return $buffer;
         }
 
-        // TODO: add the "not specified"
         if ($name == 'sex' || $name == 'gender') {
             $buffer .= '<div class="tnp-field tnp-field-gender">';
             $buffer .= $this->_shortcode_label('sex', $attrs);
 
-            $buffer .= '<select name="nx" class="tnp-gender" id="tnp-gender">';
-            $buffer .= '<option value="m">' . esc_html($this->form_options['sex_male']) . '</option>';
+            $buffer .= '<select name="nx" class="tnp-gender" id="tnp-gender"';
+            if ($this->form_options['sex_rules']) {
+                $buffer .= ' required ';
+            }
+            $buffer .= '>';
+            if ($this->form_options['sex_rules']) {
+                $buffer .= '<option value=""></option>';
+            }
+            $buffer .= '<option value="n">' . esc_html($this->form_options['sex_none']) . '</option>';
             $buffer .= '<option value="f">' . esc_html($this->form_options['sex_female']) . '</option>';
+            $buffer .= '<option value="m">' . esc_html($this->form_options['sex_male']) . '</option>';
             $buffer .= '</select>';
             $buffer .= "</div>\n";
             return $buffer;

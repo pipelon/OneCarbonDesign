@@ -17,8 +17,9 @@ class NewsletterWidget extends WP_Widget {
     static function get_widget_form($instance) {
 
         $field_wrapper_tag = 'div';
-        if (!isset($instance['nl']) || !is_array($instance['nl']))
+        if (!isset($instance['nl']) || !is_array($instance['nl'])) {
             $instance['nl'] = array();
+        }
 
         $instance = array_merge(array('lists_layout' => '',
             'lists_empty_label' => '',
@@ -31,7 +32,7 @@ class NewsletterWidget extends WP_Widget {
             'referrer'=>'widget',
             'before'=>'<div class="tnp tnp-widget">',
             'after'=>'</div>',
-            'list' => implode(',', $instance['nl']),
+            'lists' => implode(',', $instance['nl']),
             'lists_field_layout' => $instance['lists_layout'],
             'lists_field_empty_label' => $instance['lists_empty_label'],
             'lists_field_label' => $instance['lists_field_label'],

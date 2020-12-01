@@ -139,4 +139,16 @@ window.onload = function () {
 
 };
 
-
+/**
+ * Initialize the color pickers (is invoked on document load and on AJAX forms load in the composer.
+ * https://seballot.github.io/spectrum/
+ */
+function tnp_controls_init() {
+    jQuery(".tnpf-color").spectrum({
+        type: 'color',
+        allowEmpty: true,
+        showAlpha: false,
+        showInput: true,
+        preferredFormat: 'hex'
+    });
+}

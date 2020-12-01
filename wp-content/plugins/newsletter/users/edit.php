@@ -227,6 +227,12 @@ function percentValue($value, $total) {
                             </td>
                         </tr>
                         <tr>
+                            <th><?php _e('Referrer', 'newsletter') ?></th>
+                            <td>
+                                <?php echo $controls->value('referrer'); ?>
+                            </td>
+                        </tr>
+                        <tr>
                             <th><?php _e('Last activity', 'newsletter') ?></th>
                             <td>
                                 <?php echo $controls->print_date($controls->data['last_activity']); ?>
@@ -284,6 +290,7 @@ function percentValue($value, $total) {
                         <table class="widefat" style="width: auto">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Date</th>
                                     <th>Source</th>
                                     <th>IP</th>
@@ -298,6 +305,7 @@ function percentValue($value, $total) {
                                         $data = $data['new'];
                                     ?>
                                     <tr>
+                                        <td><?php echo $log->id ?></td>
                                         <td><?php echo $controls->print_date($log->created) ?></td>
                                         <td><?php echo esc_html($log->source) ?></td>
                                         <td><?php echo esc_html($log->ip) ?></td>

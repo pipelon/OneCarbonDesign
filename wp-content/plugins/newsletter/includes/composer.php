@@ -120,8 +120,8 @@ class TNP_Composer {
      * @return string
      */
     static function get_main_wrapper_open($email) {
-        if (!isset($email->options['composer_background'])) {
-            $bgcolor = '#ffffff';
+        if (!isset($email->options['composer_background']) || $email->options['composer_background'] == 'inherit') {
+            $bgcolor = '';
         } else {
             $bgcolor = $email->options['composer_background'];
         }
@@ -272,7 +272,7 @@ class TNP_Composer {
 
     /**
      * Creates the HTML for a button extrating from the options, with the provided prefix, the button attributes:
-     * 
+     *
      * - [prefix]_url The button URL
      * - [prefix]_font_family
      * - [prefix]_font_size
@@ -280,9 +280,9 @@ class TNP_Composer {
      * - [prefix]_label
      * - [prefix]_font_color The label color
      * - [prefix]_background The button color
-     * 
+     *
      * TODO: Add radius and possiblt the alignment
-     * 
+     *
      * @param array $options
      * @param string $prefix
      * @return string
@@ -316,18 +316,47 @@ class TNP_Composer {
      * Generates an IMG tag, linked if the media has an URL.
      *
      * @param TNP_Media $media
+     * @param string $style
      * @return string
      */
-    static function image($media) {
-        $b = '';
-        if ($media->link) {
-            $b .= '<a href="' . $media->link . '" target="_blank" style="text-decoration: none">';
-        }
+    static function image($media, $attr = []) {
 
-        $b .= '<img src="' . $media->url . '" width="' . $media->width . '"'
-                . ' height="' . $media->height . '"'
-                . ' alt="' . esc_attr($media->alt) . '"'
-                . ' border="0" style="max-width: 100%; height: auto;" class="image">';
+	    $default_attrs = [
+		    'style'      => 'max-width: 100%; height: auto;',
+		    'class'      => null,
+		    'link-style' => 'text-decoration: none;',
+		    'link-class' => null,
+	    ];
+
+    	$attr = array_merge($default_attrs, $attr);
+
+    	//Class and style attribute are mutually exclusive.
+	    //Class take priority to style because classes will transform to inline style inside block rendering operation
+	    if ( ! empty( $attr['class'] ) ) {
+		    $styling = ' inline-class="' . $attr['class'] . '" ';
+	    } else {
+		    $styling = ' style="' . $attr['style'] . '" ';
+	    }
+
+	    //Class and style attribute are mutually exclusive.
+	    //Class take priority to style because classes will transform to inline style inside block rendering operation
+	    if ( ! empty( $attr['link-class'] ) ) {
+		    $link_styling = ' inline-class="' . $attr['link-class'] . '" ';
+	    } else {
+		    $link_styling = ' style="' . $attr['link-style'] . '" ';
+	    }
+
+        $b = '';
+	    if ( $media->link ) {
+		    $b .= '<a href="' . $media->link . '" target="_blank" rel="noopener nofollow" ' . $link_styling . '>';
+	    }
+
+	    if ( $media ) {
+		    $b .= '<img src="' . $media->url . '" width="' . $media->width . '"'
+		          . ' height="' . $media->height . '"'
+		          . ' alt="' . esc_attr( $media->alt ) . '"'
+		          . ' border="0" ' . $styling . '>';
+	    }
 
         if ($media->link) {
             $b .= '</a>';

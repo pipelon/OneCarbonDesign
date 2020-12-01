@@ -363,7 +363,7 @@ class NewsletterModule {
      */
     var $themes;
     var $components;
-    
+
     static $current_language = '';
 
     function __construct($module, $version, $module_id = null, $components = array()) {
@@ -699,17 +699,6 @@ class NewsletterModule {
         }
 
         if (!is_email($email)) {
-            return false;
-        }
-
-        // TODO: To be moved on the subscription module and make configurable
-        if (strpos($email, 'mailinator.com') !== false) {
-            return false;
-        }
-        if (strpos($email, 'guerrillamailblock.com') !== false) {
-            return false;
-        }
-        if (strpos($email, 'emailtemporanea.net') !== false) {
             return false;
         }
         return true;
@@ -1580,8 +1569,8 @@ class NewsletterModule {
                 $class = trim($rules[1][$i]);
                 $value = trim($rules[2][$i]);
                 $value = preg_replace('|\s+|', ' ', $value);
-                $content = str_replace('class="' . $class . '"', 'class="' . $class . '" style="' . $value . '"', $content);
-                $content = str_replace('inline-class="' . $class . '"', 'style="' . $value . '"', $content);
+                $content = str_replace(' class="' . $class . '"', ' class="' . $class . '" style="' . $value . '"', $content);
+                $content = str_replace(' inline-class="' . $class . '"', ' style="' . $value . '"', $content);
             }
         }
 
@@ -1914,8 +1903,8 @@ class NewsletterModule {
 
         $text = apply_filters('newsletter_replace', $text, $user, $email, $esc_html);
 
-        $text = $this->replace_url($text, 'BLOG_URL', $home_url);
-        $text = $this->replace_url($text, 'HOME_URL', $home_url);
+        $text = $this->replace_url($text, 'blog_url', $home_url);
+        $text = $this->replace_url($text, 'home_url', $home_url);
 
         $text = str_replace('{blog_title}', html_entity_decode(get_bloginfo('name')), $text);
         $text = str_replace('{blog_description}', get_option('blogdescription'), $text);
@@ -1923,6 +1912,7 @@ class NewsletterModule {
         $text = $this->replace_date($text);
 
         if ($user) {
+            //$this->logger->debug('Replace with user ' . $user->id);
             $nk = $this->get_user_key($user);
             $options_profile = NewsletterSubscription::instance()->get_options('profile', $this->get_user_language($user));
             $text = str_replace('{email}', $user->email, $text);
@@ -1974,8 +1964,8 @@ class NewsletterModule {
             $base = (empty($this->options_main['url']) ? get_option('home') : $this->options_main['url']);
             $id_token = '&amp;ni=' . $user->id . '&amp;nt=' . $user->token;
 
-            $text = $this->replace_url($text, 'SUBSCRIPTION_CONFIRM_URL', $this->build_action_url('c', $user));
-            $text = $this->replace_url($text, 'ACTIVATION_URL', $this->build_action_url('c', $user));
+            $text = $this->replace_url($text, 'subscription_confirm_url', $this->build_action_url('c', $user));
+            $text = $this->replace_url($text, 'activation_url', $this->build_action_url('c', $user));
 
 // Obsolete.
             $text = $this->replace_url($text, 'FOLLOWUP_SUBSCRIPTION_URL', self::add_qs($base, 'nm=fs' . $id_token));
@@ -1983,20 +1973,23 @@ class NewsletterModule {
 
             $text = $this->replace_url($text, 'UNLOCK_URL', $this->build_action_url('ul', $user));
         } else {
-            $text = $this->replace_url($text, 'SUBSCRIPTION_CONFIRM_URL', '#');
-            $text = $this->replace_url($text, 'ACTIVATION_URL', '#');
+            //$this->logger->debug('Replace without user');
+            $text = $this->replace_url($text, 'subscription_confirm_url', '#');
+            $text = $this->replace_url($text, 'activation_url', '#');
         }
 
         if ($email) {
+            //$this->logger->debug('Replace with email ' . $email->id);
             $nek = $this->get_email_key($email);
             $text = str_replace('{email_id}', $email->id, $text);
             $text = str_replace('{email_key}', $nek, $text);
             $text = str_replace('{email_subject}', $email->subject, $text);
             // Deprecated
             $text = str_replace('{subject}', $email->subject, $text);
-            $text = $this->replace_url($text, 'EMAIL_URL', $this->build_action_url('v', $user) . '&id=' . $email->id);
+            $text = $this->replace_url($text, 'email_url', $this->build_action_url('v', $user) . '&id=' . $email->id);
         } else {
-            $text = $this->replace_url($text, 'EMAIL_URL', '#');
+            //$this->logger->debug('Replace without email');
+            $text = $this->replace_url($text, 'email_url', '#');
         }
 
         if (strpos($text, '{subscription_form}') !== false) {
@@ -2247,7 +2240,7 @@ class NewsletterModule {
         $text = str_replace("\n", "\r\n", $text);
         return $text;
     }
-    
+
     function set_current_language($language) {
         self::$current_language = $language;
     }
@@ -2265,7 +2258,7 @@ class NewsletterModule {
         if ($user && $user->language) {
             return $user->language;
         }
-        
+
         if (!empty(self::$current_language)) {
             return self::$current_language;
         }

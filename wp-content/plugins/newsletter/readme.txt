@@ -2,7 +2,7 @@
 Tags: email, email marketing, newsletter, newsletter subscribers, welcome email, signup forms, contact, lead generation, popup, marketing automation
 Requires at least: 3.4.0
 Tested up to: 5.5.3
-Stable tag: 6.9.6
+Stable tag: 6.9.9
 Requires PHP: 5.6
 Contributors: satollo,webagile,michael-travan
 License: GPLv2 or later
@@ -53,11 +53,16 @@ Improve The Newsletter Plugin with these free addons:
 * [Archive](https://www.thenewsletterplugin.com/documentation/archive-extension) - creates a simple blog page which lists all your sent newsletters
 * [Locked Content](https://www.thenewsletterplugin.com/documentation/locked-content-extension) - open up your premium content only after subscription
 * [Newsletter REST API](https://www.thenewsletterplugin.com/documentation/developers/newsletter-api-2/) - adds a tier of REST api to integrate with the Newsletter core services
-* [BuddyPress integration](https://wordpress.org/plugins/newsletter-buddypress/) - subscription opt-in inside BuddyPress signup form
 * [Sendinblue integration](https://www.thenewsletterplugin.com/documentation/addons/delivery-addons/sendinblue-extension/) - deliver your newsletters with Sendinblue
 
-
 (*easily add them from our [Addons panel](https://www.thenewsletterplugin.com/documentation/install-extensions)*)
+
+= Addons on WordPress.org =
+
+* [RSS Composer Block](https://wordpress.org/plugins/newsletter-rss-block/) - (3rd party) a composer block which builds its content form an RSS feed
+* [Popup Maker Integration](https://wordpress.org/plugins/newsletter-popupmaker/) - (3rd party) integration of Newsletter forms with Popup Maker plugin
+* [BuddyPress integration](https://wordpress.org/plugins/newsletter-buddypress/) - subscription opt-in inside BuddyPress signup form
+* [WP User Manager addon for Newsletter](https://wordpress.org/plugins/wpum-newsletter/) - adds the subscription option on registration forms
 
 = Professional Addons =
 
@@ -77,10 +82,6 @@ Need *more power*? Feel *something's missing*? The Newsletter Plugin features ca
 * [Google Analytics](https://www.thenewsletterplugin.com/google-analytics) - track newsletter links with Google UTM tracking paramaters
 * [Subscribe on Comment](https://www.thenewsletterplugin.com/documentation/comments-extension) - adds the subscription option to your blog comment form
 * [Geolocation](https://www.thenewsletterplugin.com/documentation/geolocation-extension) - adds geolocation capability to target subscribers by location
-
-= (NEW!) Third Party Addons =
-
-* [WP User Manager addon for Newsletter](https://wordpress.org/plugins/wpum-newsletter/) - adds the subscription option on registration forms
 
 = GDPR =
 
@@ -116,6 +117,28 @@ Thank you, The Newsletter Team
 3. The Reports extension
 
 == Changelog ==
+
+= 6.9.9 =
+
+* Not specified gender fix
+* Labels translation
+* Added "newsletter_message" filter to act on the whole message before sending
+* Removed X-Mailer when sending with the internal SMTP
+* Added referrer field on subscriber editing page
+* Fixed button label control on composer
+
+= 6.9.8 =
+
+* New color picker
+* Extended the IP field on stats table
+* Removed filter for temporary email services (can be added in the security page)
+* Added support to show the last regular newsletter (not private) adding to the home url ?na=view&id=last
+* Hero and image blocks now use high res images
+
+= 6.9.7 =
+
+* Fixed country filter
+* Fixed tag replacements for server with TR-tr locale
 
 = 6.9.6 =
 

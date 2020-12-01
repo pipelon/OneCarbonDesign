@@ -4,7 +4,7 @@
   Plugin Name: Newsletter
   Plugin URI: https://www.thenewsletterplugin.com/plugins/newsletter
   Description: Newsletter is a cool plugin to create your own subscriber list, to send newsletters, to build your business. <strong>Before update give a look to <a href="https://www.thenewsletterplugin.com/category/release">this page</a> to know what's changed.</strong>
-  Version: 6.9.6
+  Version: 6.9.9
   Author: Stefano Lissa & The Newsletter Team
   Author URI: https://www.thenewsletterplugin.com
   Disclaimer: Use at your own risk. No warranty expressed or implied is provided.
@@ -35,7 +35,7 @@ if (version_compare(phpversion(), '5.6', '<')) {
     return;
 }
 
-define('NEWSLETTER_VERSION', '6.9.6');
+define('NEWSLETTER_VERSION', '6.9.9');
 
 global $newsletter, $wpdb;
 
@@ -464,6 +464,7 @@ class Newsletter extends NewsletterModule {
             $this->add_menu_page('main', __('Settings and More', 'newsletter'));
             $this->add_admin_page('smtp', 'SMTP');
             $this->add_admin_page('status', __('Status', 'newsletter'));
+            $this->add_admin_page('diagnostic', __('Diagnostic', 'newsletter'));
             $this->add_admin_page('test', __('Test', 'newsletter'));
         }
     }
@@ -511,6 +512,7 @@ class Newsletter extends NewsletterModule {
         $newsletter_url = plugins_url('newsletter');
         wp_enqueue_script('jquery-ui-tabs');
         wp_enqueue_script('jquery-ui-tooltip');
+        wp_enqueue_script('jquery-ui-draggable');
         wp_enqueue_media();
 
         wp_enqueue_style('tnp-admin-font', 'https://use.typekit.net/jlj2wjy.css');
@@ -520,14 +522,14 @@ class Newsletter extends NewsletterModule {
         wp_enqueue_style('tnp-admin-fields', $newsletter_url . '/css/fields.css', [], NEWSLETTER_VERSION);
         wp_enqueue_style('tnp-admin-widgets', $newsletter_url . '/css/widgets.css', [], NEWSLETTER_VERSION);
         wp_enqueue_style('tnp-admin', $newsletter_url . '/admin.css',
-                array(
+                [
                     'tnp-admin-font',
                     'tnp-admin-fontawesome',
                     'tnp-admin-jquery-ui',
                     'tnp-admin-dropdown',
                     'tnp-admin-fields',
                     'tnp-admin-widgets'
-                ), NEWSLETTER_VERSION);
+                ], NEWSLETTER_VERSION);
 
         wp_enqueue_script('tnp-admin', $newsletter_url . '/admin.js', ['jquery'], NEWSLETTER_VERSION);
 
@@ -536,16 +538,16 @@ class Newsletter extends NewsletterModule {
         );
         wp_localize_script('tnp-admin', 'tnp_translations', $translations_array);
 
-        wp_enqueue_style('wp-color-picker');
-        wp_enqueue_script('wp-color-picker');
+        wp_enqueue_style('tnp-select2', $newsletter_url . '/vendor/select2/select2.css', [], NEWSLETTER_VERSION);
+        wp_enqueue_script('tnp-select2', $newsletter_url . '/vendor/select2/select2.min.js', [], NEWSLETTER_VERSION);
+        wp_enqueue_script('tnp-jquery-vmap', $newsletter_url . '/vendor/jqvmap/jquery.vmap.min.js', ['jquery'], NEWSLETTER_VERSION);
+        wp_enqueue_script('tnp-jquery-vmap-world', $newsletter_url . '/vendor/jqvmap/jquery.vmap.world.js', ['tnp-jquery-vmap'], NEWSLETTER_VERSION);
+        wp_enqueue_style('tnp-jquery-vmap', $newsletter_url . '/vendor/jqvmap/jqvmap.min.css', [], NEWSLETTER_VERSION);
 
-        wp_enqueue_style('tnp-select2', $newsletter_url . '/vendor/select2/select2.css');
-        wp_enqueue_script('tnp-select2', $newsletter_url . '/vendor/select2/select2.min.js');
-        wp_enqueue_script('tnp-jquery-vmap', $newsletter_url . '/vendor/jqvmap/jquery.vmap.min.js', array('jquery'));
-        wp_enqueue_script('tnp-jquery-vmap-world', $newsletter_url . '/vendor/jqvmap/jquery.vmap.world.js', array('tnp-jquery-vmap'));
-        wp_enqueue_style('tnp-jquery-vmap', $newsletter_url . '/vendor/jqvmap/jqvmap.min.css');
+        wp_register_script('tnp-chart', $newsletter_url . '/vendor/chartjs/Chart.min.js', ['jquery'], NEWSLETTER_VERSION);
 
-        wp_register_script('tnp-chart', $newsletter_url . '/vendor/chartjs/Chart.min.js', array('jquery'));
+        wp_enqueue_script('tnp-color-picker', $newsletter_url . '/vendor/spectrum/spectrum.min.js', ['jquery']);
+        wp_enqueue_style('tnp-color-picker', $newsletter_url . '/vendor/spectrum/spectrum.min.css', [], NEWSLETTER_VERSION);
     }
 
     function shortcode_newsletter_replace($attrs, $content) {
@@ -844,7 +846,7 @@ class Newsletter extends NewsletterModule {
         $message->email_id = $email->id;
         $message->user_id = $user->id;
 
-        return $message;
+        return apply_filters('newsletter_message', $message, $email, $user);
     }
 
     /**
@@ -957,14 +959,16 @@ class Newsletter extends NewsletterModule {
     }
 
     /**
-     * 
+     *
      * @param TNP_Mailer_Message $message
      * @return type
      */
     function deliver($message) {
         $mailer = $this->get_mailer();
-        if (empty($message->from)) $message->from = $this->options['sender_email'];
-        if (empty($message->from_name)) $mailer->from_name = $this->options['sender_name'];
+        if (empty($message->from))
+            $message->from = $this->options['sender_email'];
+        if (empty($message->from_name))
+            $mailer->from_name = $this->options['sender_name'];
         return $mailer->send($message);
     }
 
@@ -998,7 +1002,7 @@ class Newsletter extends NewsletterModule {
                 $mailer_message->body = $this->clean_eol($message['html']);
             }
         }
-        
+
         $this->logger->debug($mailer_message);
 
         $mailer = $this->get_mailer();
@@ -1253,7 +1257,7 @@ class Newsletter extends NewsletterModule {
                 $newsletter_page_url = apply_filters('wpml_permalink', $newsletter_page_url, $language, true);
             }
             if (function_exists('pll_get_post')) {
-	            $translated_page = get_permalink( pll_get_post( $page->ID, $language ) );
+                $translated_page = get_permalink(pll_get_post($page->ID, $language));
                 if ($translated_page) {
                     $newsletter_page_url = $translated_page;
                 }

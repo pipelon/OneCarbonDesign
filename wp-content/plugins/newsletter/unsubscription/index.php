@@ -47,11 +47,12 @@ if (!$controls->is_action()) {
                 <?php $controls->button_reset() ?>
             </p>
             <div id="tabs">
+                
                 <ul>
                     <li><a href="#tabs-cancellation"><?php _e('Cancellation', 'newsletter') ?></a></li>
                     <li><a href="#tabs-reactivation"><?php _e('Reactivation', 'newsletter') ?></a></li>
-
                 </ul>
+                
                 <div id="tabs-cancellation">
                     <table class="form-table">
                         <tr>
@@ -81,6 +82,7 @@ if (!$controls->is_action()) {
                                 </p>
                             </td>
                         </tr>
+                        
                         <tr>
                             <th><?php _e('On error', 'newsletter') ?></th>
                             <td>
@@ -90,10 +92,10 @@ if (!$controls->is_action()) {
                                 </p>
                             </td>
                         </tr>
-
                     </table>
                     
-                    <h3>Advanced</h3>
+                    <h3><?php _e('Advanced', 'newsletter')?></h3>
+                    
                     <?php if ($is_all_languages) { ?>
                     <table class="form-table">
                     <tr>
@@ -113,7 +115,7 @@ if (!$controls->is_action()) {
                             </td>
                         </tr>
                         <tr>
-                            <th><?php _e('Notify admin on unsubscription', 'newsletter') ?></th>
+                            <th><?php _e('Notify admin on cancellation', 'newsletter') ?></th>
                             <td>
                                 <?php $controls->yesno('notify_admin_on_unsubscription'); ?>
                             </td>

@@ -217,7 +217,6 @@ class TNP_Mailer_Message {
 
 }
 
-
 /**
  * Wrapper mailer for old addons registering the "mail" method (ultra deprecated).
  */
@@ -327,16 +326,16 @@ class NewsletterDefaultMailer extends NewsletterMailer {
         if (is_null($this->current_message)) {
             return;
         }
-        
+
         $newsletter = Newsletter::instance();
         if (isset($this->current_message->encoding)) {
             $mailer->Encoding = $this->current_message->encoding;
         } else {
-        if (!empty($newsletter->options['content_transfer_encoding'])) {
-            $mailer->Encoding = $newsletter->options['content_transfer_encoding'];
-        } else {
-            $mailer->Encoding = 'base64';
-        }
+            if (!empty($newsletter->options['content_transfer_encoding'])) {
+                $mailer->Encoding = $newsletter->options['content_transfer_encoding'];
+            } else {
+                $mailer->Encoding = 'base64';
+            }
         }
 
         /* @var $mailer PHPMailer */
@@ -491,8 +490,10 @@ class NewsletterDefaultSMTPMailer extends NewsletterMailer {
         $logger = $this->get_logger();
         $logger->debug('Setting up PHP mailer');
 
-	    require_once 'PHPMailerLoader.php';
-	    $this->mailer = PHPMailerLoader::make_instance();
+        require_once 'PHPMailerLoader.php';
+        $this->mailer = PHPMailerLoader::make_instance();
+        
+        $this->mailer->XMailer = ' '; // A space!
 
         $this->mailer->IsSMTP();
         $this->mailer->Host = $this->options['host'];
@@ -544,5 +545,3 @@ class NewsletterDefaultSMTPMailer extends NewsletterMailer {
     }
 
 }
-
-

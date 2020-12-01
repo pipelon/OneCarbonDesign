@@ -92,10 +92,10 @@ class NewsletterProfile extends NewsletterModule {
 
         // Profile edit page URL and link
         $url = $this->get_profile_url($user, $email);
-        $text = $this->replace_url($text, 'PROFILE_URL', $url);
+        $text = $this->replace_url($text, 'profile_url', $url);
         // Profile export URL and link
         $url = $this->get_profile_export_url($user);
-        $text = $this->replace_url($text, 'PROFILE_EXPORT_URL', $url);
+        $text = $this->replace_url($text, 'profile_export_url', $url);
 
         if (strpos($text, '{profile_form}') !== false) {
             $text = str_replace('{profile_form}', $this->get_profile_form($user), $text);
@@ -242,10 +242,17 @@ class NewsletterProfile extends NewsletterModule {
         if ($options['sex_status'] >= 1) {
             $buffer .= '<div class="tnp-field tnp-field-gender">';
             $buffer .= '<label>' . esc_html($options['sex']) . '</label>';
-            $buffer .= '<select name="nx" class="tnp-gender">';
+            $buffer .= '<select name="nx" class="tnp-gender"';
+            if ($options['sex_rules']) {
+                $buffer .= ' required ';
+            }
+            $buffer .= '>';
+            if ($options['sex_rules']) {
+                $buffer .= '<option value=""></option>';
+            }
+            $buffer .= '<option value="n"' . ($user->sex == 'n' ? ' selected' : '') . '>' . esc_html($options['sex_none']) . '</option>';
             $buffer .= '<option value="f"' . ($user->sex == 'f' ? ' selected' : '') . '>' . esc_html($options['sex_female']) . '</option>';
             $buffer .= '<option value="m"' . ($user->sex == 'm' ? ' selected' : '') . '>' . esc_html($options['sex_male']) . '</option>';
-            $buffer .= '<option value="n"' . ($user->sex == 'n' ? ' selected' : '') . '>' . esc_html($options['sex_none']) . '</option>';
             $buffer .= '</select>';
             $buffer .= "</div>\n";
         }

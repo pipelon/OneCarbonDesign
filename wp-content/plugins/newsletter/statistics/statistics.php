@@ -21,7 +21,7 @@ class NewsletterStatistics extends NewsletterModule {
     }
 
     function __construct() {
-        parent::__construct('statistics', '1.2.7');
+        parent::__construct('statistics', '1.2.8');
         add_action('wp_loaded', array($this, 'hook_wp_loaded'));
     }
 
@@ -158,7 +158,7 @@ class NewsletterStatistics extends NewsletterModule {
           `url` varchar(255) NOT NULL DEFAULT '',
           `user_id` int(11) NOT NULL DEFAULT '0',
   `email_id` varchar(10) NOT NULL DEFAULT '0',
-          `ip` varchar(20) NOT NULL DEFAULT '',
+          `ip` varchar(100) NOT NULL DEFAULT '',
           PRIMARY KEY (`id`),
           KEY `email_id` (`email_id`),
           KEY `user_id` (`user_id`)

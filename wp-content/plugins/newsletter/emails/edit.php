@@ -136,6 +136,11 @@ if ($controls->is_action('test') || $controls->is_action('save') || $controls->i
     for ($i = 1; $i <= 20; $i ++) {
         unset($email['options']["profile_$i"]);
     }
+    
+    // Patch for Geo addon to be solved with a filter
+    unset($email['options']['countries']);
+    unset($email['options']['regions']);
+    unset($email['options']['cities']);
 
     foreach ($controls->data as $name => $value) {
         if (strpos($name, 'options_') === 0) {

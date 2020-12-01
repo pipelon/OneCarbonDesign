@@ -142,12 +142,12 @@ class NewsletterUnsubscription extends NewsletterModule {
     function hook_newsletter_replace($text, $user, $email, $html = true) {
 
         if ($user) {
-            $text = $this->replace_url($text, 'UNSUBSCRIPTION_CONFIRM_URL', $this->build_action_url('uc', $user, $email));
-            $text = $this->replace_url($text, 'UNSUBSCRIPTION_URL', $this->build_action_url('u', $user, $email));
-            $text = $this->replace_url($text, 'REACTIVATE_URL', $this->build_action_url('reactivate', $user, $email));
+            $text = $this->replace_url($text, 'unsubscription_confirm_url', $this->build_action_url('uc', $user, $email));
+            $text = $this->replace_url($text, 'unsubscription_url', $this->build_action_url('u', $user, $email));
+            $text = $this->replace_url($text, 'reactivate_url', $this->build_action_url('reactivate', $user, $email));
         } else {
-            $text = $this->replace_url($text, 'UNSUBSCRIPTION_CONFIRM_URL', $this->build_action_url('nul'));
-            $text = $this->replace_url($text, 'UNSUBSCRIPTION_URL', $this->build_action_url('nul'));
+            $text = $this->replace_url($text, 'unsubscription_confirm_url', $this->build_action_url('nul'));
+            $text = $this->replace_url($text, 'unsubscription_url', $this->build_action_url('nul'));
         }
 
         return $text;
