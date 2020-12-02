@@ -772,7 +772,7 @@ function moreTab() {
 }
 jQuery(document).ready(function () {
     "use strict";
-    moreTab()
+    //SE COMENTA POR FELIPE ECHEVERRI PARA NO PONER MENU MORE moreTab()
 });
 // JS for Sticky Header
 function StickyHeader() {
