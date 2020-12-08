@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Contact Form 7 - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-21 11:01:11+0000\n"
+"PO-Revision-Date: 2020-12-07 06:58:04+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -46,7 +46,7 @@ msgstr "Se ha llamado a %1$s incorrectamente. %2$s %3$s"
 msgid "(This message was added in Contact Form 7 version %s.)"
 msgstr "(Este mensaje se ha añadido en Contact Form 7 versión %s.)"
 
-#: modules/flamingo.php:275 includes/special-mail-tags.php:22
+#: modules/flamingo.php:285 includes/special-mail-tags.php:22
 #: includes/special-mail-tags.php:97 includes/special-mail-tags.php:164
 #: includes/special-mail-tags.php:206
 msgid "The fourth parameter ($mail_tag) must be an instance of the WPCF7_MailTag class."
@@ -197,7 +197,7 @@ msgid "Setup Integration"
 msgstr "Configurar la integración"
 
 #: modules/constant-contact.php:490
-msgid "Constant Contact Integration"
+msgid "Constant Contact integration"
 msgstr "Integración con Constant Contact"
 
 #: modules/constant-contact.php:486
@@ -213,7 +213,7 @@ msgid "Constant Contact"
 msgstr "Constant Contact"
 
 #: modules/constant-contact.php:9
-msgid "Email Marketing"
+msgid "Email marketing"
 msgstr "Marketing por correo electrónico"
 
 #: includes/config-validator.php:649
@@ -1373,7 +1373,7 @@ msgstr "Mensajes"
 
 #: admin/edit-contact-form.php:241 admin/includes/editor.php:93
 msgid "Mail"
-msgstr "Correo electrónico"
+msgstr "Correo"
 
 #: admin/edit-contact-form.php:237 admin/includes/editor.php:61
 msgid "Form"
@@ -1548,6 +1548,6 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. Plugin Name of the plugin
-#: modules/flamingo.php:191 admin/admin.php:21 includes/block-editor/index.js:1
+#: modules/flamingo.php:201 admin/admin.php:21 includes/block-editor/index.js:1
 msgid "Contact Form 7"
 msgstr "Contact Form 7"
