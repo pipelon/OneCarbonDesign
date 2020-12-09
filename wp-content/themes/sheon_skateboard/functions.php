@@ -102,4 +102,15 @@ function tmpmela_sampledata_after_import($selected_import) {
 }
 add_action( 'pt-ocdi/after_import', 'tmpmela_sampledata_after_import' );
 endif;
+
+/**
+ * Replace the home link URL
+ */
+add_filter('woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url');
+
+function woo_custom_breadrumb_home_url() {
+    $url = get_option( 'siteurl' );
+    return $url . '/products';
+}
+
 ?>
