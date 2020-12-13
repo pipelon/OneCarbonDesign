@@ -1,8 +1,8 @@
 === Newsletter ===
 Tags: email, email marketing, newsletter, newsletter subscribers, welcome email, signup forms, contact, lead generation, popup, marketing automation
 Requires at least: 3.4.0
-Tested up to: 5.5.3
-Stable tag: 6.9.9
+Tested up to: 5.6
+Stable tag: 7.0.0
 Requires PHP: 5.6
 Contributors: satollo,webagile,michael-travan
 License: GPLv2 or later
@@ -59,7 +59,7 @@ Improve The Newsletter Plugin with these free addons:
 
 = Addons on WordPress.org =
 
-* [RSS Composer Block](https://wordpress.org/plugins/newsletter-rss-block/) - (3rd party) a composer block which builds its content form an RSS feed
+* [RSS Composer Block](https://wordpress.org/plugins/newsletter-rss-block/) - (3rd party) a composer block which builds its content from a RSS feed
 * [Popup Maker Integration](https://wordpress.org/plugins/newsletter-popupmaker/) - (3rd party) integration of Newsletter forms with Popup Maker plugin
 * [BuddyPress integration](https://wordpress.org/plugins/newsletter-buddypress/) - subscription opt-in inside BuddyPress signup form
 * [WP User Manager addon for Newsletter](https://wordpress.org/plugins/wpum-newsletter/) - adds the subscription option on registration forms
@@ -117,6 +117,12 @@ Thank you, The Newsletter Team
 3. The Reports extension
 
 == Changelog ==
+
+* Added multiple newsletter selection for deletion
+* Added text part on welcome and activation email
+* Added the attribute "show_form" to "newsletter" shortcode 
+* Added filter on subscriber saving (from external systems) with wrong list field values
+* Added index.html on log folder
 
 = 6.9.9 =
 

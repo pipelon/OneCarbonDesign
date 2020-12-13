@@ -1,11 +1,11 @@
 <?php
+/* @var $this NewsletterEmails */
 defined('ABSPATH') || exit;
 
 require_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
 require_once NEWSLETTER_INCLUDES_DIR . '/paginator.php';
 
 $controls = new NewsletterControls();
-$module = NewsletterEmails::instance();
 
 if ($controls->is_action('copy')) {
     $original = Newsletter::instance()->get_email($_POST['btn']);
@@ -19,12 +19,12 @@ if ($controls->is_action('copy')) {
     $email['track'] = $original->track;
     $email['options'] = $original->options;
 
-    $module->save_email($email);
+    $this->save_email($email);
     $controls->messages .= __('Message duplicated.', 'newsletter');
 }
 
 if ($controls->is_action('delete')) {
-    $module->delete_email($_POST['btn']);
+    $this->delete_email($_POST['btn']);
     $controls->add_message_deleted();
 }
 
@@ -33,16 +33,8 @@ if ($controls->is_action('delete_selected')) {
     $controls->messages .= $r . ' message(s) deleted';
 }
 
-/* ====================================== */
-/* ======= PAGINATION CONTROLLERS ======= */
-/* ====================================== */
-
 $pagination_controller = new TNP_Pagination_Controller( NEWSLETTER_EMAILS_TABLE, 'id', [ 'type' => 'message' ] );
 $emails                = $pagination_controller->get_items();
-
-/* ====================================== */
-/* ===== END PAGINATION CONTROLLERS ===== */
-/* ====================================== */
 
 ?>
 
@@ -61,7 +53,7 @@ $emails                = $pagination_controller->get_items();
         <form method="post" action="">
             <?php $controls->init(); ?>
 
-            <a href="<?php echo $module->get_admin_page_url('theme'); ?>" class="button-primary"><?php _e('New newsletter', 'newsletter') ?></a>
+            <a href="<?php echo $this->get_admin_page_url('theme'); ?>" class="button-primary"><?php _e('New newsletter', 'newsletter') ?></a>
 	        <?php $controls->button_confirm('delete_selected', __('Delete selected newsletters', 'newsletter')); ?>
 
             <?php $pagination_controller->display_paginator(); ?>
@@ -69,7 +61,7 @@ $emails                = $pagination_controller->get_items();
             <table class="widefat tnp-newsletters-list" style="width: 100%">
                 <thead>
                     <tr>
-                        <th>&nbsp;</th>
+                        <th><input type="checkbox" onchange="jQuery('input.tnp-selector').prop('checked', this.checked)"></th>
                         <th>Id</th>
                         <th><?php _e('Subject', 'newsletter') ?></th>
                         <th><?php _e('Status', 'newsletter') ?></th>
@@ -87,7 +79,7 @@ $emails                = $pagination_controller->get_items();
                     <?php
                     foreach ($emails as $email) { ?>
                         <tr>
-                            <td><input type="checkbox" name="ids[]" value="<?php echo $email->id; ?>"/></td>
+                            <td><input type="checkbox" class="tnp-selector" name="ids[]" value="<?php echo $email->id; ?>"/></td>
                             <td><?php echo $email->id; ?></td>
                             <td><?php
                                 if ($email->subject)
@@ -98,14 +90,14 @@ $emails                = $pagination_controller->get_items();
                             </td>
 
                             <td>
-                                <?php $module->show_email_status_label($email) ?>
+                                <?php $this->show_email_status_label($email) ?>
                             </td>
                             <td>
-                                <?php $module->show_email_progress_bar($email, array('numbers'=>true)) ?>
+                                <?php $this->show_email_progress_bar($email, array('numbers'=>true)) ?>
                             </td>
-                            <td><?php if ($email->status == 'sent' || $email->status == 'sending') echo $module->format_date($email->send_on); ?></td>
+                            <td><?php if ($email->status == 'sent' || $email->status == 'sending') echo $this->format_date($email->send_on); ?></td>
                             <td>
-                                <?php echo $module->get_edit_button($email) ?>
+                                <?php echo $this->get_edit_button($email) ?>
                             </td>
 
                             <td>

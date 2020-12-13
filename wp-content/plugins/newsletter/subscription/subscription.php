@@ -912,11 +912,11 @@ class NewsletterSubscription extends NewsletterModule {
     }
 
     /**
-     * Sends a service message applying the template.
+     * Sends a service message applying the template to the HTML part
      *
      * @param TNP_User $user
      * @param string $subject
-     * @param string $message
+     * @param string|array $message If string it is considered HTML, if array it should contains the key "html" and "text"
      * @return type
      */
     function mail($user, $subject, $message) {
@@ -928,14 +928,21 @@ class NewsletterSubscription extends NewsletterModule {
         if (empty($template) || strpos($template, '{message}') === false) {
             $template = '{message}';
         }
-        $message = str_replace('{message}', $message, $template);
+        
+        if (is_array($message)) {
+            $message['html'] = str_replace('{message}', $message['html'], $template);
+            $message['html'] = $this->replace($message['html'], $user);
+            $message['text'] = $this->replace($message['text'], $user);
+        }
+        else {
+            $message = str_replace('{message}', $message, $template);
+            $message = $this->replace($message, $user);
+        }
 
-        //$headers = array('Auto-Submitted' => 'auto-generated');
-
-        $headers = array();
+        $headers = [];
 
         // Replaces tags from the template
-        $message = $this->replace($message, $user);
+        
         $subject = $this->replace($subject, $user);
 
         return Newsletter::instance()->mail($user->email, $subject, $message, $headers);
@@ -1020,13 +1027,25 @@ class NewsletterSubscription extends NewsletterModule {
         $language = $this->get_user_language($user);
 
         $options = $this->get_options('', $language);
-        $message = $options[$type . '_message'];
+        $message = [];
+        $message['html'] = $options[$type . '_message'];
+        $message['text'] = $this->get_text_message($type);
         if ($user->status == Newsletter::STATUS_NOT_CONFIRMED) {
-            $message = $this->add_microdata($message);
+            $message['html'] = $this->add_microdata($message['html']);
         }
         $subject = $options[$type . '_subject'];
 
         return $this->mail($user, $subject, $message);
+    }
+    
+    function get_text_message($type) {
+        switch ($type) {
+            case 'confirmation':
+                return __('To confirm your subscription follow the link below.', 'newsletter') . "\n\n{subscription_confirm_url}";
+            case 'confirmed':
+                return __('Your subscription has been confirmed.', 'newsletter');
+        }
+        return '';
     }
 
     function is_double_optin() {
@@ -1814,6 +1833,10 @@ class NewsletterSubscription extends NewsletterModule {
 
         // Now check what form must be added
         if ($message_key == 'subscription') {
+            if (isset($attrs['show_form']) && $attrs['show_form'] === 'false') {
+                //return $this->build_field_admin_notice('The [newsletter] shortcode is configured to not show the subscription form.');
+                return;
+            }
 
             // Compatibility check
             if (stripos($message, '<form') !== false) {

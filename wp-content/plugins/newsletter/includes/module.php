@@ -230,12 +230,12 @@ class TNP_Subscription_Data {
             $subscriber->referrer = $this->referrer;
         if (!empty($this->http_referrer))
             $subscriber->http_referrer = $this->http_referrer;
-	    if (!empty($this->country))
-		    $subscriber->country = $this->country;
-	    if (!empty($this->region))
-		    $subscriber->region = $this->region;
-	    if (!empty($this->city))
-		    $subscriber->city = $this->city;
+        if (!empty($this->country))
+            $subscriber->country = $this->country;
+        if (!empty($this->region))
+            $subscriber->region = $this->region;
+        if (!empty($this->city))
+            $subscriber->city = $this->city;
 
 
         foreach ($this->lists as $id => $value) {
@@ -267,8 +267,6 @@ class TNP_Subscription {
      */
     var $data;
     var $spamcheck = true;
-
-
     // The optin to use, empty for the plugin default. It's a string to facilitate the use by addons (which have a selector for the desired
     // optin as empty (for default), 'single' or 'double'.
     var $optin = null;
@@ -363,7 +361,6 @@ class NewsletterModule {
      */
     var $themes;
     var $components;
-
     static $current_language = '';
 
     function __construct($module, $version, $module_id = null, $components = array()) {
@@ -847,7 +844,7 @@ class NewsletterModule {
     }
 
     function admin_menu() {
-
+        
     }
 
     function add_menu_page($page, $title, $capability = '') {
@@ -993,8 +990,9 @@ class NewsletterModule {
 
     /**
      * Delete one or more emails identified by ID (single value or array of ID)
+     * 
      * @global wpdb $wpdb
-     * @param int|array $id
+     * @param int|array $id Single numeric ID or an array of IDs to be deleted
      * @return boolean
      */
     function delete_email($id) {
@@ -1004,8 +1002,8 @@ class NewsletterModule {
             // $id could be an array if IDs
             $id = (array) $id;
             foreach ($id as $email_id) {
-                $wpdb->delete(NEWSLETTER_STATS_TABLE, array('email_id' => $email_id));
-                $wpdb->delete(NEWSLETTER_SENT_TABLE, array('email_id' => $email_id));
+                $wpdb->delete(NEWSLETTER_STATS_TABLE, ['email_id' => $email_id]);
+                $wpdb->delete(NEWSLETTER_SENT_TABLE, ['email_id' => $email_id]);
             }
         }
         return $r;
@@ -1060,7 +1058,7 @@ class NewsletterModule {
             if ($attrs['scheduled']) {
                 echo '<span class="tnp-progress-date">', $this->format_date($email->send_on), '</span>';
             }
-	        return;
+            return;
         } else if ($email->status == 'new') {
             echo '';
             return;
@@ -1343,7 +1341,8 @@ class NewsletterModule {
         $profiles[$language] = [];
         $all = $this->get_profiles($language);
         foreach ($all as $profile) {
-            if ($profile->is_private()) continue;
+            if ($profile->is_private())
+                continue;
 
             $profiles[$language]['' . $profile->id] = $profile;
         }
@@ -1365,7 +1364,8 @@ class NewsletterModule {
         $profiles[$language] = [];
         $all = $this->get_profiles($language);
         foreach ($all as $profile) {
-            if (!$profile->show_on_profile()) continue;
+            if (!$profile->show_on_profile())
+                continue;
 
             $profiles[$language]['' . $profile->id] = $profile;
         }
@@ -1395,35 +1395,34 @@ class NewsletterModule {
         return $lists[$language];
     }
 
-	public function create_tnp_list_from_db_lists_array( $db_lists_array, $list_id ) {
+    public function create_tnp_list_from_db_lists_array($db_lists_array, $list_id) {
 
-		$list       = new TNP_List();
-		$list->name = $db_lists_array[ 'list_' . $list_id ];
-		$list->id   = $list_id;
+        $list = new TNP_List();
+        $list->name = $db_lists_array['list_' . $list_id];
+        $list->id = $list_id;
 
-		// New format
-		if ( isset( $db_lists_array[ 'list_' . $list_id . '_subscription' ] ) ) {
-			$list->forced               = ! empty( $db_lists_array[ 'list_' . $list_id . '_forced' ] );
-			$list->status               = empty( $db_lists_array[ 'list_' . $list_id . '_status' ] ) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
-			$list->checked              = $db_lists_array[ 'list_' . $list_id . '_subscription' ] == 2;
-			$list->show_on_subscription = $list->status != TNP_List::STATUS_PRIVATE && ! empty( $db_lists_array[ 'list_' . $list_id . '_subscription' ] ) && ! $list->forced;
-			$list->show_on_profile      = $list->status != TNP_List::STATUS_PRIVATE && ! empty( $db_lists_array[ 'list_' . $list_id . '_profile' ] );
-		} else {
-			$list->forced               = ! empty( $db_lists_array[ 'list_' . $list_id . '_forced' ] );
-			$list->status               = empty( $db_lists_array[ 'list_' . $list_id . '_status' ] ) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
-			$list->checked              = ! empty( $db_lists_array[ 'list_' . $list_id . '_checked' ] );
-			$list->show_on_subscription = $db_lists_array[ 'list_' . $list_id . '_status' ] == 2 && ! $list->forced;
-			$list->show_on_profile      = $db_lists_array[ 'list_' . $list_id . '_status' ] == 1 || $db_lists_array[ 'list_' . $list_id . '_status' ] == 2;
-		}
-		if ( empty( $db_lists_array[ 'list_' . $list_id . '_languages' ] ) ) {
-			$list->languages = array();
-		} else {
-			$list->languages = $db_lists_array[ 'list_' . $list_id . '_languages' ];
-		}
+        // New format
+        if (isset($db_lists_array['list_' . $list_id . '_subscription'])) {
+            $list->forced = !empty($db_lists_array['list_' . $list_id . '_forced']);
+            $list->status = empty($db_lists_array['list_' . $list_id . '_status']) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
+            $list->checked = $db_lists_array['list_' . $list_id . '_subscription'] == 2;
+            $list->show_on_subscription = $list->status != TNP_List::STATUS_PRIVATE && !empty($db_lists_array['list_' . $list_id . '_subscription']) && !$list->forced;
+            $list->show_on_profile = $list->status != TNP_List::STATUS_PRIVATE && !empty($db_lists_array['list_' . $list_id . '_profile']);
+        } else {
+            $list->forced = !empty($db_lists_array['list_' . $list_id . '_forced']);
+            $list->status = empty($db_lists_array['list_' . $list_id . '_status']) ? TNP_List::STATUS_PRIVATE : TNP_List::STATUS_PUBLIC;
+            $list->checked = !empty($db_lists_array['list_' . $list_id . '_checked']);
+            $list->show_on_subscription = $db_lists_array['list_' . $list_id . '_status'] == 2 && !$list->forced;
+            $list->show_on_profile = $db_lists_array['list_' . $list_id . '_status'] == 1 || $db_lists_array['list_' . $list_id . '_status'] == 2;
+        }
+        if (empty($db_lists_array['list_' . $list_id . '_languages'])) {
+            $list->languages = array();
+        } else {
+            $list->languages = $db_lists_array['list_' . $list_id . '_languages'];
+        }
 
-		return $list;
-
-	}
+        return $list;
+    }
 
     /**
      * Returns an array of TNP_List objects of lists that are public.
@@ -1528,7 +1527,20 @@ class NewsletterModule {
                 $user['token'] = NewsletterModule::get_token();
             }
         }
-// Due to the unique index on email field, this can fail.
+
+        // We still don't know when it happens but under some conditions, matbe external, lists are passed as NULL
+        foreach ($user as $key => $value) {
+            if (strpos($key, 'list_') !== 0) {
+                continue;
+            }
+            if (is_null($value)) {
+                unset($user[$key]);
+            } else {
+                $user[$key] = (int) $value;
+            }
+        }
+
+        // Due to the unique index on email field, this can fail.
         return $this->store->save(NEWSLETTER_USERS_TABLE, $user, $return_format);
     }
 
@@ -2056,9 +2068,9 @@ class NewsletterModule {
 
     public static function antibot_form_check($captcha = false) {
 
-	    if ( defined( 'NEWSLETTER_ANTIBOT' ) && ! NEWSLETTER_ANTIBOT ) {
-		    return true;
-	    }
+        if (defined('NEWSLETTER_ANTIBOT') && !NEWSLETTER_ANTIBOT) {
+            return true;
+        }
 
         if (strtolower($_SERVER['REQUEST_METHOD']) != 'post') {
             return false;

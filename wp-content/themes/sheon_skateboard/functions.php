@@ -113,4 +113,12 @@ function woo_custom_breadrumb_home_url() {
     return $url . '/products';
 }
 
+
+add_filter( 'woocommerce_breadcrumb_defaults', 'jk_change_breadcrumb_home_text' );
+function jk_change_breadcrumb_home_text( $defaults ) {
+    // Change the breadcrumb home text from 'Home' to 'Voice Overs'
+    $defaults['home'] = 'Products';
+    return $defaults;
+}
+
 ?>

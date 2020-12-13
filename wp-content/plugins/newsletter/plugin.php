@@ -4,7 +4,7 @@
   Plugin Name: Newsletter
   Plugin URI: https://www.thenewsletterplugin.com/plugins/newsletter
   Description: Newsletter is a cool plugin to create your own subscriber list, to send newsletters, to build your business. <strong>Before update give a look to <a href="https://www.thenewsletterplugin.com/category/release">this page</a> to know what's changed.</strong>
-  Version: 6.9.9
+  Version: 7.0.0
   Author: Stefano Lissa & The Newsletter Team
   Author URI: https://www.thenewsletterplugin.com
   Disclaimer: Use at your own risk. No warranty expressed or implied is provided.
@@ -35,7 +35,7 @@ if (version_compare(phpversion(), '5.6', '<')) {
     return;
 }
 
-define('NEWSLETTER_VERSION', '6.9.9');
+define('NEWSLETTER_VERSION', '7.0.0');
 
 global $newsletter, $wpdb;
 
@@ -151,7 +151,7 @@ class Newsletter extends NewsletterModule {
             return $schedules;
         }, 1000);
 
-        parent::__construct('main', '1.6.3', null, array('info', 'smtp'));
+        parent::__construct('main', '1.6.5', null, array('info', 'smtp'));
 
         $max = $this->options['scheduler_max'];
         if (!is_numeric($max)) {
@@ -314,6 +314,8 @@ class Newsletter extends NewsletterModule {
         if (!$install_time) {
             update_option('newsletter_install_time', time(), false);
         }
+        
+        touch(NEWSLETTER_LOG_DIR . '/index.html');
 
         Newsletter::instance()->upgrade();
         NewsletterUsers::instance()->upgrade();
@@ -433,6 +435,8 @@ class Newsletter extends NewsletterModule {
 
         delete_transient("tnp_extensions_json");
 
+        touch(NEWSLETTER_LOG_DIR . '/index.html');
+        
         return true;
     }
 
@@ -971,7 +975,17 @@ class Newsletter extends NewsletterModule {
             $mailer->from_name = $this->options['sender_name'];
         return $mailer->send($message);
     }
-
+    
+    /**
+     * 
+     * @param type $to
+     * @param type $subject
+     * @param string|array $message If string is considered HTML, is array should contains the keys "html" and "text"
+     * @param type $headers
+     * @param type $enqueue
+     * @param type $from
+     * @return boolean
+     */
     function mail($to, $subject, $message, $headers = array(), $enqueue = false, $from = false) {
 
         if (empty($subject)) {
