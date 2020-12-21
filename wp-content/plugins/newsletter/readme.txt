@@ -2,7 +2,7 @@
 Tags: email, email marketing, newsletter, newsletter subscribers, welcome email, signup forms, contact, lead generation, popup, marketing automation
 Requires at least: 3.4.0
 Tested up to: 5.6
-Stable tag: 7.0.0
+Stable tag: 7.0.1
 Requires PHP: 5.6
 Contributors: satollo,webagile,michael-travan
 License: GPLv2 or later
@@ -117,6 +117,12 @@ Thank you, The Newsletter Team
 3. The Reports extension
 
 == Changelog ==
+
+= 7.0.1 =
+
+* Fixed enforced lists by language with Polylang
+
+= 7.0.0 =
 
 * Added multiple newsletter selection for deletion
 * Added text part on welcome and activation email

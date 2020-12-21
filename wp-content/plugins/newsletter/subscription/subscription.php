@@ -461,12 +461,12 @@ class NewsletterSubscription extends NewsletterModule {
      *
      * @return \TNP_Subscription
      */
-    function get_default_subscription() {
+    function get_default_subscription($language = '') {
         $subscription = new TNP_Subscription();
+        $subscription->data->language = $language;
         $subscription->optin = $this->is_double_optin() ? 'double' : 'single';
         $subscription->if_exists = empty($this->options['multiple']) ? TNP_Subscription::EXISTING_ERROR : TNP_Subscription::EXISTING_MERGE;
 
-        $language = $this->get_current_language();
         $lists = $this->get_lists();
         foreach ($lists as $list) {
             if ($list->forced) {
@@ -474,7 +474,7 @@ class NewsletterSubscription extends NewsletterModule {
                 continue;
             }
             // Enforced by language
-            if (in_array($language, $list->languages)) {
+            if ($language && in_array($language, $list->languages)) {
                 $subscription->data->lists['' . $list->id] = 1;
             }
         }
@@ -723,7 +723,15 @@ class NewsletterSubscription extends NewsletterModule {
      * @return TNP_Subscription
      */
     function build_subscription() {
-        $subscription = $this->get_default_subscription();
+        
+        $language = '';
+        if (!empty($_REQUEST['nlang'])) {
+            $language = $_REQUEST['nlang'];
+        } else {
+            $language = $this->get_current_language();
+        }
+        
+        $subscription = $this->get_default_subscription($language);
         $data = $subscription->data;
 
         $data->email = $_REQUEST['ne'];
@@ -731,25 +739,17 @@ class NewsletterSubscription extends NewsletterModule {
         if (isset($_REQUEST['nn'])) {
             $data->name = stripslashes($_REQUEST['nn']);
         }
-        // TODO: required checking
 
         if (isset($_REQUEST['ns'])) {
             $data->surname = stripslashes($_REQUEST['ns']);
         }
-        // TODO: required checking
 
         if (!empty($_REQUEST['nx'])) {
             $data->sex = $_REQUEST['nx'][0];
         }
-        // TODO: valid values check
 
         if (isset($_REQUEST['nr'])) {
             $data->referrer = $_REQUEST['nr'];
-        }
-
-        $language = '';
-        if (!empty($_REQUEST['nlang'])) {
-            $data->language = $_REQUEST['nlang'];
         }
 
         // From the antibot form
@@ -784,6 +784,7 @@ class NewsletterSubscription extends NewsletterModule {
                     continue;
                 }
                 $data->lists['' . $list_id] = 1;
+                
             }
         } else {
             $this->logger->debug('No lists received');

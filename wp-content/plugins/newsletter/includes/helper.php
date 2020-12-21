@@ -243,7 +243,7 @@ function tnp_resize($media_id, $size) {
 
         if (!$r) {
             Newsletter::instance()->logger->error('Unable to create dir ' . $uploads['basedir'] . '/newsletter/thumbnails/' . $pathinfo['dirname']);
-            return _tnp_get_default_media($media_id);
+            return _tnp_get_default_media($media_id, $size);
         }
 
         $editor = wp_get_image_editor($absolute_file);
